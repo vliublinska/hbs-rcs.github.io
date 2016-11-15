@@ -1,0 +1,211 @@
+---
+title: Python, R, Packages, and the Grid
+author: Andrew Marder
+layout: post
+---
+
+If you think Python 2.6.6 or R 3.0.2 sound old, I have good
+news for you. The [Conda](http://conda.pydata.org/docs/) package manager makes it easy
+to install the latest and greatest Python and R packages in your home
+directory. Conda facilitates the installation of Python 2.7.11, Python 3.5.2, and R 3.3.1.
+
+# Installation
+
+The first step to installing Python or R on the Grid is to install Miniconda. The steps below outline how to install Miniconda.
+
+1.  Log in to the grid:
+
+    ```bash
+    ssh researchgrid.hbs.edu
+    ```
+
+2.  Set up an alias so it's easy to submit interactive jobs to
+    back-end nodes:
+
+    ```bash
+    alias my_run="bsub -app generic-5g -q interactive -Is"
+    ```
+
+3.  Download the Miniconda installer:
+
+    ```bash
+    my_run wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+    ```
+
+4.  Run the installer
+
+    ```bash
+    chmod +x Miniconda2-latest-Linux-x86_64.sh
+    my_run ./Miniconda2-latest-Linux-x86_64.sh
+    ```
+
+    Here's how I answered the questions when running the installer:
+
+    1.  Do you approve the license terms? yes
+    2.  I pressed enter to install Miniconda2 in ~/miniconda2
+    3.  Do you wish the installer to prepend the Miniconda2 install
+        location to PATH in your ~/.bashrc ? no
+
+5.  Make sure the Miniconda bin is on your search path:
+
+    ```bash
+    export PATH="~/miniconda2/bin:$PATH"
+    ```
+
+    If you skip this step, trying to use Conda will throw error
+    messages like `-bash: conda: command not found`. It is also useful
+    to put the same export command in your `~/.bash_profile`
+    file. This way when you log into the grid and call python in the
+    future it will find the python in `~/miniconda2/bin` first rather
+    than using the old version in `/usr/local/bin`.
+    
+6.  Remove the Miniconda installer:
+
+    ```bash
+    rm -f Miniconda2-latest-Linux-x86_64.sh
+    ```
+
+## Python
+
+Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section \ref{sec:install}.
+
+The following command installs the typical Python packages used in social science research:
+
+```bash
+my_run conda install anaconda
+```
+
+If the Python packages included in Anaconda are insufficient for your needs, Conda's documentation on [managing packages](http://conda.pydata.org/docs/using/pkgs.html) has excellent information on how to install additional packages. The general approach to installing additional packages proceeds as follows:
+
+1.  See if the package is available through Conda with `conda search`. If it is, install the package using `conda install`.
+
+2.  See if the package is available on [http://anaconda.org](http://anaconda.org). If it is, install the package using `conda install` being sure to specify the correct channel.
+
+3.  To install a non-conda package, use `pip` to install the package.
+
+## R
+
+Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section \ref{sec:install}.
+
+The following command installs the typical R packages used in social science research:
+
+```bash
+my_run conda install -c r r-essentials
+```
+
+Notice that the above command installs `r-essentials` from the `r` channel. This package contains the latest version of R.
+
+If you need additional R packages the general approach proceeds as follows:
+
+1.  Search [http://anaconda.org](http://anaconda.org). If the package is available use `conda install` specifying the appropriate channel.
+
+2.  If the package is available through CRAN but not Conda, you can create a new Conda package from the CRAN repository. For documentation on this process see [building conda packages](http://conda.pydata.org/docs/build_tutorials/pkgs.html) and [conda skeleton cran](http://conda.pydata.org/docs/commands/build/conda-skeleton-cran.html). This looks like a bit of work to do properly.
+
+3.  This [Stack Overflow answer](http://stackoverflow.com/a/35023854/3756632) provides a quick and dirty workaround if you don't want to build new Conda packages. The key insight is to open R and use `install.packages` being sure the specify the correct path for where to install the package, something like:
+
+    ```r
+    install.packages("rstan", lib = "~/miniconda2/lib/R/library")
+    ```
+
+## Environments
+
+One of Conda's most useful features is the ability to create virtual environments. This is particularly helpful if you have multiple projects that depend on different versions of packages. With a virtual environment you can update the packages for one project without disturbing the packages of your other projects. Conda's documentation on [managing environments](http://conda.pydata.org/docs/using/envs.html) is a good place to learn about this feature.
+
+# Execution
+
+Now that you have installed python and R in `~/miniconda2/bin/` you
+need to run these programs using bsub commands so your computationally
+intense jobs are run on back-end nodes rather than on front-end
+nodes. Below I give a quick introduction to submitting batch and
+interactive jobs through LSF.
+
+## Batch
+
+To start let's create an alias describing a `bsub` command for submitting batch jobs. If you want to learn more about bsub go to *this page in the documentation*.
+
+```bash
+alias my_batch="bsub -app generic-5g -q normal"
+```
+
+If you want to run a Python script named `your_file.py` you would run:
+
+```bash
+my_batch ~/miniconda2/bin/python your_file.py
+```
+
+Notice that it's important to give the full path to your installation of Python. Similarly, here is how to run an R script named `your_file.R`:
+
+```bash
+my_batch ~/miniconda2/bin/Rscript your_file.R
+```
+
+## Interactive
+
+Note, I define the `my_run` alias used below in Section \ref{sec:install}.
+
+There are a lot of ways to run interactive Python and R jobs on the Grid. I'm going to highlight the most enjoyable ways:
+
+### Jupyter Console
+
+If you want to work at the command line, the Jupyter Console makes interactive work quite pleasant and it works with both Python and R. To run Python use:
+
+```bash
+my_run jupyter console
+```
+
+To run R use:
+
+```bash
+my_run jupyter console --kernel=ir
+```
+
+### Jupyter Notebook
+
+If you want to work in the browser and do interactive data visualization, the Jupyter Notebook is the way to go. It works with both Python and R, you just have to specify the language when creating a new notebook. To run the Jupyter Notebook use:
+
+```bash
+my_run jupyter notebook --browser=firefox
+```
+
+### RStudio Desktop
+
+It is possible to run RStudio Desktop on the grid. Here is how I run RStudio (note the spelling of the `Rstudio` command has a capital `R` and a lower-case `s`):
+
+```bash
+export RSTUDIO_WHICH_R=~/miniconda2/bin/R
+Rstudio
+```
+
+Unfortunately, install RStudio on the Grid is quite challenging and the currently installed version is quite old. You're likely to have a more pleasant interactive experience using the Jupyter Notebook, which is easy to install.
+
+# Troubleshooting
+
+## `lattice` was built before R 3.0.0
+
+`R` is working great, but I'm getting the following error:
+
+```r
+> library(lattice)
+Error: package ‘lattice’ was built before R 3.0.0: please re-install it
+```
+
+This is happening because `R` is looking for packages in two places:
+
+```r
+> .libPaths()
+[1] "/usr/local/apps/R/packages"
+[2] "/export/home/dor/amarder/miniconda2/lib/R/library"
+```
+
+The first directory has old packages in it. When `R` is loading `lattice` it tries to import the version in `/usr/local/apps/R/packages` first, unfortunately this version is too old and the import fails. To fix this issue remove this directory from `.libPaths`.
+
+```r
+> .libPaths(.libPaths()[.libPaths() != "/usr/local/apps/R/packages"])
+> library(lattice)
+```
+
+You have successfully imported lattice in the current R session. To make this change affect all future `R` sessions add the following line to your `~/.Rprofile` file:
+
+```r
+.libPaths(.libPaths()[.libPaths() != "/usr/local/apps/R/packages"])
+```
