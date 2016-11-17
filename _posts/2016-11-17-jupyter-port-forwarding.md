@@ -1,0 +1,32 @@
+---
+title: Research Grid - Connecting to Jupyter Notebooks
+author: Andrew Marder
+---
+
+The instructions below are adapted [this post](http://www.datasciencebytes.com/bytes/2015/12/18/using-jupyter-notebooks-securely-on-remote-linux-machines/). The key idea is to use ssh to connect a port on your local machine to a port on the remote machine. Because the grid uses LSF to run the Jupyter notebook on a back-end node we have to use this trick twice to connect your local machine to the front-end node, and the front-end node to the back-end node. Let's jump in...
+
+1.  Connect to NoMachine (you could do this with two ssh connections if you prefer ssh).
+
+2.  Open a terminal and start the Jupyter notebook on a back-end node using the following `bsub` command:
+
+        bsub -app generic-5g -q interactive -Is jupyter notebook --no-browser
+
+    Note what back-end node the Jupyter notebook is running on (this will be printed on the third line after your bsub command).
+    
+        Job <134879> is submitted to queue <interactive>.
+        <<Waiting for dispatch ...>>
+        <<Starting on rhrcsnod01>>
+        
+    In my case, the notebook is running on `rhrcsnod01`.
+    
+    Also note what port the Jupyter notebook is running at. In my case port 8888 was taken so it ended up running at on port 8889.
+    
+3.  Open a new terminal, use the `hostname` command to see what front-end node you are on. In my case, I am on `rhrcscli02`. Now use `ssh` to connect port 8889 on the back-end node to port 8889 on the front-end node:
+
+        ssh -NL localhost:8889:localhost:8889 rhrcsnod01
+        
+4.  Now on your local machine, use `ssh` to connect port 8889 on your local machine to the port 8889 on the front-end node:
+
+        ssh -NL localhost:8889:localhost:8889 rhrcscli02.hbs.edu
+        
+5.  Open a web browser and navigate to http://localhost:8889/ you should see the Jupyter notebook running on the grid!
