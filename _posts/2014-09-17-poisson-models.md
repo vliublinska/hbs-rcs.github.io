@@ -3,6 +3,7 @@ author: Xiang Ao
 layout: post
 title: A comparison of various count data models with extra zeros
 comments: true
+tags: statistics
 ---
 
 In empirical studies, data sets with a lot of zeros are often hard to model.  There are various models to deal with it:  zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc.  

@@ -1,6 +1,8 @@
 ---
 title: Power Analysis
 author: Andrew Marder
+layout: post
+tags: statistics
 ---
 
 # Introduction

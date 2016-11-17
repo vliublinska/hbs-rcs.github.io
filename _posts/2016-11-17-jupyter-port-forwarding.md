@@ -1,6 +1,8 @@
 ---
-title: Research Grid - Connecting to Jupyter Notebooks
+title: Connecting to Jupyter Notebooks
 author: Andrew Marder
+layout: post
+tags: grid
 ---
 
 The instructions below are adapted [this post](http://www.datasciencebytes.com/bytes/2015/12/18/using-jupyter-notebooks-securely-on-remote-linux-machines/). The key idea is to use ssh to connect a port on your local machine to a port on the remote machine. Because the grid uses LSF to run the Jupyter notebook on a back-end node we have to use this trick twice to connect your local machine to the front-end node, and the front-end node to the back-end node. Let's jump in...
