@@ -1,5 +1,12 @@
-Interaction term in a non-linear model
-======================================
+---
+author: Xiang Ao
+layout: post
+title: Interaction term in a non-linear model
+comments: true
+tags:
+  - statistics
+  - R
+---
 
 In a non-linear model (for example, logit or poisson model), the
 interpretation of the coefficient on the interaction term is tricky. [Ai
