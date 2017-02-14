@@ -1,3 +1,14 @@
+---
+author: Xiang Ao
+layout: post
+title: Interpreting interaction term in a regression model
+comments: true
+tags:
+  - statistics
+  - R
+---
+
+
 Interaction with two binary variables
 =====================================
 
