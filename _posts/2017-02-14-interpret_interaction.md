@@ -2,7 +2,7 @@
 ---
 author: Xiang Ao
 layout: post
-title: Interpreting interaction term in a regression model
+title: Interaction term in a regression model
 comments: true
 tags:
   - statistics
