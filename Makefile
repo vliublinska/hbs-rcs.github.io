@@ -1,5 +1,5 @@
 clean: 
-	rm -r public
+	rm -rf public
 
 #################################
 # Build the site using blogdown #
@@ -20,4 +20,4 @@ serve: clean
 #########################
 
 deploy: build
-	GIT_DEPLOY_DIR=public ./deploy.sh
+	GIT_DEPLOY_DIR=public GIT_DEPLOY_BRANCH=master ./deploy.sh
