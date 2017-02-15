@@ -1,5 +1,5 @@
 ---
-title: Connecting to Jupyter Notebooks
+title: Connecting to Jupyter Notebooks on the Grid
 author: Andrew Marder
 layout: post
 tags: grid
