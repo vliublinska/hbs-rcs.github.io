@@ -1,10 +1,10 @@
-baseurl = "/"
+baseurl = "https://hbs-rcs.github.io/"
 relativeurls = true
 languageCode = "en-us"
-title = "Lithium Theme"
+title = "HBS RCS"
 theme = "hugo-lithium-theme"
 googleAnalytics = ""
-disqusShortname = ""
+disqusShortname = "hbs-rcs"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [permalinks]
@@ -15,10 +15,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     url = "/about/"
 [[menu.main]]
     name = "GitHub"
-    url = "https://github.com/rstudio/blogdown"
-[[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/rstudio"
+    url = "https://github.com/hbs-rcs/hbs-rcs.github.io"
 
 [params]
     description = "A website built through Hugo and blogdown."
@@ -33,4 +30,3 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     width = 50
     height = 50
     alt = "Logo"
-
