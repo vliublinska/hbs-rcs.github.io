@@ -21,3 +21,5 @@ kramdown:
     disable: true
 
 permalink: pretty
+
+theme: jekyll-theme-modernist
