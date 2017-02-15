@@ -51,13 +51,13 @@ the four cells(combinations).
 <tbody>
 <tr class="odd">
 <td>control</td>
-<td align="center"><span class="math inline"><em>β</em><sub>0</sub></span></td>
-<td align="center"><span class="math inline"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span></td>
+<td align="center">$_0 $</td>
+<td align="center"><br /><span class="math display"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span><br /></td>
 </tr>
 <tr class="even">
 <td>treatment</td>
-<td align="center"><span class="math inline"><em>β</em><sub>0</sub> + <em>β</em><sub>2</sub></span></td>
-<td align="center"><span class="math inline"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub> + <em>β</em><sub>2</sub> + <em>β</em><sub>12</sub></span></td>
+<td align="center">$_0 + _2 $</td>
+<td align="center"><br /><span class="math display"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub> + <em>β</em><sub>2</sub> + <em>β</em><sub>12</sub></span><br /></td>
 </tr>
 </tbody>
 </table>
@@ -181,3 +181,71 @@ situations of union and black. In fact, in this example, despite the
 interaction term being insignificant, all six comparisons of the cell
 means turn out to have 95% confidence intervals that do not include
 zero.
+
+Interaction with continuous variables
+=====================================
+
+Let's start with the simpliest situation: *x*<sub>1</sub> and
+*x*<sub>2</sub> are continuous.
+
+*E*(*y*)=*β*<sub>1</sub>*x*<sub>1</sub> + *β*<sub>2</sub>*x*<sub>2</sub> + *β*<sub>12</sub>*x*<sub>1</sub> \* *x*<sub>2</sub>
+
+In this case, we recommend "centering" *x*<sub>1</sub> and
+*x*<sub>2</sub> if they are continuous; that is, subtracting the mean
+value from each continuous independent variable when they are involved
+in the interaction term. There are two reason for it:
+
+1.  To reduce multi-collinearity. If the range of *x*<sub>1</sub> and
+    *x*<sub>2</sub> include only positive numbers, then
+    *x*<sub>1</sub> \* *x*<sub>2</sub> can be highly correlated with
+    both or one of *x*<sub>1</sub> and *x*<sub>2</sub>. This can lead to
+    numerical problems and unstable coefficient estimates
+    (multi-collinearity problem).
+
+"Centering" can reduce the correlation between the interaction term and
+the independent variables. If the original variables are normally
+distributed, interaction term after centering is actually uncorrelated
+with the original variables. When they are not normally distributed,
+centering will still reduce the correlation to a large degree.
+
+1.  To help with interpretation. In a model with interaction,
+    *β*<sub>1</sub> represents the effect of *x*<sub>1</sub> when
+    *x*<sub>2</sub> is zero. However, in many situations, zero is not
+    within the range of *x*<sub>2</sub>. After centering, centered
+    *x*<sub>2</sub> at zero simply means original *x*<sub>2</sub> at its
+    mean value.
+
+When we have dummy variable interacting with continuous variable, only
+continuous variable should be centered.
+
+Again, Stata's margins command is helpful.
+
+    sysuse auto
+    gen mpg_centered=mpg-r(mean)
+    sum mpg_centered
+    reg price i.foreign##c.mpg_centered
+    margins foreign, at(mpg_centered=(-3 (1) 3))
+    marginsplot
+
+    ## 
+    ## . sysuse auto
+    ## (1978 Automobile Data)
+    ## 
+    ## . gen mpg_centered=mpg-r(mean)
+    ## (74 missing values generated)
+    ## 
+    ## . sum mpg_centered
+    ## 
+    ##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+    ## -------------+---------------------------------------------------------
+    ## mpg_centered |          0
+    ## 
+    ## . reg price i.foreign##c.mpg_centered
+    ## no observations
+    ## r(2000);
+    ## 
+    ## end of do-file
+    ## r(2000);
+
+In this example, the graph shows the predicted price for foreign and
+domestic cars at different level of mpg.
