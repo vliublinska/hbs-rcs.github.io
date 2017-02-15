@@ -1,11 +1,12 @@
 ---
 author: Xiang Ao
 layout: post
-title: Interpreting interaction term in a regression model
+title: Interaction term in a regression model
 comments: true
 tags:
   - statistics
   - R
+date: 2017-02-15
 ---
 
 
@@ -18,7 +19,7 @@ attention to only the coefficient of the interaction term.
 Let's start with the simpliest situation: *x*<sub>1</sub> and
 *x*<sub>2</sub> are binary and coded 0/1.
 
-*E*(*y*)=*β*<sub>1</sub>*x*<sub>1</sub> + *β*<sub>2</sub>*x*<sub>2</sub> + *β*<sub>12</sub>*x*<sub>1</sub> \* *x*<sub>2</sub>
+*E*(*y*)=*β*<sub>1</sub>*x*<sub>1</sub> + *β*<sub>2</sub>*x*<sub>2</sub> + *β*<sub>12</sub>*x*<sub>1</sub>*x*<sub>2</sub>
 
 In this case, we have a saturated model; that is, we have three
 coefficients representing additive effects from the baseline situation
@@ -51,12 +52,12 @@ the four cells(combinations).
 <tbody>
 <tr class="odd">
 <td>control</td>
-<td align="center">$_0 $</td>
+<td align="center"><br /><span class="math display"><em>β</em><sub>0</sub></span><br /></td>
 <td align="center"><br /><span class="math display"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span><br /></td>
 </tr>
 <tr class="even">
 <td>treatment</td>
-<td align="center">$_0 + _2 $</td>
+<td align="center"><br /><span class="math display"><em>β</em><sub>0</sub> + <em>β</em><sub>2</sub></span><br /></td>
 <td align="center"><br /><span class="math display"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub> + <em>β</em><sub>2</sub> + <em>β</em><sub>12</sub></span><br /></td>
 </tr>
 </tbody>
@@ -221,6 +222,7 @@ continuous variable should be centered.
 Again, Stata's margins command is helpful.
 
     sysuse auto
+    sum mpg
     gen mpg_centered=mpg-r(mean)
     sum mpg_centered
     reg price i.foreign##c.mpg_centered
@@ -231,21 +233,91 @@ Again, Stata's margins command is helpful.
     ## . sysuse auto
     ## (1978 Automobile Data)
     ## 
+    ## . sum mpg
+    ## 
+    ##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+    ## -------------+---------------------------------------------------------
+    ##          mpg |         74     21.2973    5.785503         12         41
+    ## 
     ## . gen mpg_centered=mpg-r(mean)
-    ## (74 missing values generated)
     ## 
     ## . sum mpg_centered
     ## 
     ##     Variable |        Obs        Mean    Std. Dev.       Min        Max
     ## -------------+---------------------------------------------------------
-    ## mpg_centered |          0
+    ## mpg_centered |         74   -4.03e-08    5.785503  -9.297297    19.7027
     ## 
     ## . reg price i.foreign##c.mpg_centered
-    ## no observations
-    ## r(2000);
     ## 
-    ## end of do-file
-    ## r(2000);
+    ##       Source |       SS           df       MS      Number of obs   =        74
+    ## -------------+----------------------------------   F(3, 70)        =      9.48
+    ##        Model |   183435285         3  61145094.9   Prob > F        =    0.0000
+    ##     Residual |   451630112        70  6451858.74   R-squared       =    0.2888
+    ## -------------+----------------------------------   Adj R-squared   =    0.2584
+    ##        Total |   635065396        73  8699525.97   Root MSE        =    2540.1
+    ## 
+    ## ------------------------------------------------------------------------------
+    ##        price |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+    ## -------------+----------------------------------------------------------------
+    ##      foreign |
+    ##     Foreign  |   1666.519    717.217     2.32   0.023     236.0751    3096.963
+    ## mpg_centered |  -329.2551   74.98545    -4.39   0.000    -478.8088   -179.7013
+    ##              |
+    ##      foreign#|
+    ##           c. |
+    ## mpg_centered |
+    ##     Foreign  |   78.88826   112.4812     0.70   0.485    -145.4485     303.225
+    ##              |
+    ##        _cons |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+    ## ------------------------------------------------------------------------------
+    ## 
+    ## . margins foreign, at(mpg_centered=(-3 (1) 3))
+    ## 
+    ## Adjusted predictions                            Number of obs     =         74
+    ## Model VCE    : OLS
+    ## 
+    ## Expression   : Linear prediction, predict()
+    ## 
+    ## 1._at        : mpg_centered    =          -3
+    ## 
+    ## 2._at        : mpg_centered    =          -2
+    ## 
+    ## 3._at        : mpg_centered    =          -1
+    ## 
+    ## 4._at        : mpg_centered    =           0
+    ## 
+    ## 5._at        : mpg_centered    =           1
+    ## 
+    ## 6._at        : mpg_centered    =           2
+    ## 
+    ## 7._at        : mpg_centered    =           3
+    ## 
+    ## ------------------------------------------------------------------------------
+    ##              |            Delta-method
+    ##              |     Margin   Std. Err.      t    P>|t|     [95% Conf. Interval]
+    ## -------------+----------------------------------------------------------------
+    ##  _at#foreign |
+    ##  1#Domestic  |    6576.06    370.446    17.75   0.000     5837.229    7314.891
+    ##   1#Foreign  |   8005.915   766.8178    10.44   0.000     6476.545    9535.284
+    ##  2#Domestic  |   6246.805   354.4734    17.62   0.000      5539.83     6953.78
+    ##   2#Foreign  |   7755.548   709.9327    10.92   0.000     6339.632    9171.464
+    ##  3#Domestic  |    5917.55   354.0032    16.72   0.000     5211.513    6623.587
+    ##   3#Foreign  |   7505.181   658.8306    11.39   0.000     6191.185    8819.177
+    ##  4#Domestic  |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+    ##   4#Foreign  |   7254.814   614.9548    11.80   0.000     6028.325    8481.303
+    ##  5#Domestic  |    5259.04    397.981    13.21   0.000     4465.292    6052.788
+    ##   5#Foreign  |   7004.447   579.9479    12.08   0.000     5847.778    8161.117
+    ##  6#Domestic  |   4929.785   437.9413    11.26   0.000     4056.338    5803.231
+    ##   6#Foreign  |   6754.081   555.4891    12.16   0.000     5646.192    7861.969
+    ##  7#Domestic  |    4600.53    486.253     9.46   0.000     3630.729    5570.331
+    ##   7#Foreign  |   6503.714   543.0057    11.98   0.000     5420.723    7586.704
+    ## ------------------------------------------------------------------------------
+    ## 
+    ## . marginsplot
+    ## 
+    ##   Variables that uniquely identify margins: mpg_centered foreign
+    ## 
+    ## .
 
 In this example, the graph shows the predicted price for foreign and
 domestic cars at different level of mpg.

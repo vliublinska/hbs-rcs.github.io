@@ -4,6 +4,7 @@ layout: post
 title: A comparison of Lewbel model vs. OLS and TSLS
 comments: true
 tags: statistics
+date: 2014-09-12
 ---
 
 This post is inspired by [diffuse prior](http://diffuseprior.wordpress.com/2014/05/15/the-ivlewbel-package-a-new-way-to-tackle-endogenous-regressor-models/)
