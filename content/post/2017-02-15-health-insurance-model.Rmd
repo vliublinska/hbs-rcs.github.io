@@ -2,6 +2,7 @@
 title: Health Insurance Model
 date: '2017-02-15'
 author: 'Andrew Marder'
+draft: true
 ---
 
 ```{r, echo = FALSE, message = FALSE}
@@ -12,7 +13,7 @@ library(dplyr)
 opts_chunk$set(echo = FALSE)
 ```
 
-Consider an individual's choice of how much health insurance to buy. Imagine there are two goods the individual needs to choose between. She must choose how much health insurance to purchase $x_h$ and how much of a generic consumption good to consume $x_c$. She maximizes her utility from these two goods subject to her budget constraint (the total amount spent on both goods cannot exceed her wealth $w$):
+Consider an individual's choice of how much health insurance to buy. Imagine there are two goods the individual needs to choose between. She must choose how much health insurance to purchase $x_h$ and how much of a generic consumption good to consume $x_c$. She maximizes her utility from these two goods subject to her budget constraint (the total amount spent on both goods cannot exceed her after-tax wage $w$):
 
 $$
 \begin{aligned}
@@ -26,33 +27,51 @@ $$
 Notice that I have normalized the price of the generic good to one. 
 
 ```{r, warning = FALSE}
-p_h <- 5
-w <- 75
-x_c_star <- w / 2
-x_h_star <- w / 2 / p_h
-u_star <- (w - x_c_star) / p_h * x_c_star
+my_graph <- function(p_h, w, t = 0.25, y_labels = c("0", ~ x[h]^0, ~ frac(w, p[h])),
+                     x_labels = c("0", ~ x[c]^0, ~ w)) {
+    x_c_star <- w / 2
+    x_h_star <- w / 2 / p_h
+    u_star <- (w - x_c_star) / p_h * x_c_star
 
-data <- data.frame(x_c = 0:w) %>%
-    mutate(
-        x_h = (w - x_c) / p_h,
-        x_h = ifelse(x_h < 0, NA, x_h),
-        indifference = u_star / x_c
-    )
+    data <- data.frame(x_c = 0:w) %>%
+        mutate(
+            x_h = (w - x_c) / p_h,
+            x_h = ifelse(x_h < 0, NA, x_h),
+            indifference = u_star / x_c
+        )
 
-ggplot() +
-    geom_line(aes(x = x_c, y = x_h), data) +
-    geom_line(aes(x = x_c, y = indifference), data %>% filter(indifference <= 25)) +
-    theme_bw() +
-    scale_y_continuous(
-        name = "Health Insurance",
-        breaks = c(0, x_h_star, w / p_h),
-        labels = c("0", ~ x[h]^o, ~ frac(w, p[h])),
-        minor_breaks = NULL
-    ) +
-    scale_x_continuous(
-        name = "Other Consumption Goods",
-        breaks = c(0, x_c_star, w),
-        labels = c("0", ~ x[c]^o, "w"),
-        minor_breaks = NULL
-    )
+    ggplot() +
+        geom_ribbon(aes(x = x_c, ymax = x_h, ymin = 0), data, alpha = 0.25) +
+        geom_line(aes(x = x_c, y = indifference), data %>% filter(indifference <= 50)) +
+        theme_bw() +
+        scale_y_continuous(
+            name = "Health Insurance",
+            breaks = c(0, x_h_star, w / p_h),
+            labels = y_labels,
+            minor_breaks = NULL
+        ) +
+        scale_x_continuous(
+            name = "Other Consumption Goods",
+            breaks = c(0, x_c_star, w),
+            labels = x_labels,
+            minor_breaks = NULL
+        )
+}
+
+my_graph(p_h = 5, w = 75)
+```
+
+The model above describes how an individual chooses health insurance absent any distortions. Now we consider the situation where an employer subsidizes an employee's health insurance. Imagine an employer paying a proportion $s$ of the employee's health insurance premiums. This would lower the effective price of health insurance to $(1 - s) p_h$ and increase the amount of health insurance consumed.
+
+```{r}
+s <- 0.5
+my_graph(p_h = (1 - s) * 5, w = 75,
+         y_labels = c(0, ~ x[h]^1, ~ frac(w, (1 - s) * p[h])),
+         x_labels = c(0, ~ x[c]^1, ~ w))
+```
+
+If the government no longer allows companies to subsidize health insurance with pre-tax dollars it would be more efficient for the employer to stop subsidizing insurance and instead increase the employee's wage by the dollar amount of the subsidy $s p_h x_h^1$.
+
+```{r}
+1 + 1
 ```
