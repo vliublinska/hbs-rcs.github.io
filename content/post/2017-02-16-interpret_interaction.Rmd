@@ -94,9 +94,11 @@ sum mpg_centered
 reg price i.foreign##c.mpg_centered
 margins foreign, at(mpg_centered=(-3 (1) 3))
 marginsplot
-
+graph export temp.eps, replace
+!convert -density 125 temp.eps temp.png
+!rm temp.eps
 ```
 
+![](/post/temp.png)
+
 In this example, the graph shows the predicted price for foreign and domestic cars at different level of mpg.
-
-
