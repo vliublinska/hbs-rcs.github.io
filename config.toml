@@ -26,7 +26,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     highlightjsTheme = "github"
 
     [params.logo]
-    url = "logo.png"
+    url = "logo.svg"
     width = 50
     height = 50
     alt = "Logo"

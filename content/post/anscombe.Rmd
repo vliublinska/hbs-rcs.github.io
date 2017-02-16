@@ -1,11 +1,11 @@
 ---
-title: Plotting Anscombe's Quartet
+title: A Custom Logo
+slug: logo
 date: 2017-02-16
 author: Andrew Marder
-draft: true
 ---
 
-I thought it might be fun to make a custom plot to use as a logo. After trying out [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe's_quartet)...
+I thought it would be fun to make a custom logo for the site. Below is the code I used to plot [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe's_quartet).
 
 ```{r, message = FALSE, dpi = 50, fig.width = 10}
 library(tidyr)
@@ -28,25 +28,29 @@ long <- wide %>%
     spread("variable", "value")
 
 g <- ggplot(long, aes(x = x, y = y)) +
-    ## geom_line(stat = "smooth", method = "lm", se = FALSE, color = "white", alpha = 0.5) +
-    geom_point(color = "white", size = 2) +
+    ## geom_line(stat = "smooth", method = "lm", se = FALSE, color = "white", size = 1, alpha = 0.5) +
+    geom_point(color = "white", size = 0.25) +
     facet_wrap(~ dataset) +
     theme_bw() +
     xlab(NULL) +
     ylab(NULL) +
     theme(
-        panel.background = element_rect(fill = "black", color = "black"),
+        panel.background = element_rect(fill = gray(0.4), color = "black"),
         strip.background = element_blank(),
         strip.text.x = element_blank(),
         axis.ticks = element_blank(),
-        axis.text = element_blank()
+        axis.text = element_blank(),
+        panel.spacing = unit(0.3, "lines"),
+        plot.margin = unit(c(0, 0, 0, 0), "mm")
     ) +
     scale_x_continuous(breaks = NULL, limits = c(3.5, 19.5)) +
     scale_y_continuous(breaks = NULL, limits = c(2, 14)) +
     coord_fixed()
 
 ## install.packages("svglite")
-ggsave("logo.svg", g)
+ggsave("logo.svg", g, height = 1, width = 1.25, dpi = 50)
+system("cp logo.svg ../../static/images/")
+system("rm logo.svg")
 ```
 
-![](/post/logo.svg)
+![](/images/logo.svg)
