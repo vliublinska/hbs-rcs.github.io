@@ -29,18 +29,18 @@ $$ E(y) = \beta_1 female + \beta_2 treatment + \beta_{12} female*treatment $$
 The two dummy-coded binary variables, female and treatment, form four combinations.  The following 2x2 table represents the expected means of the four cells(combinations).
 
 
-|               |  male                   |  female                                        |
-| ------------- |:-----------------------:|:----------------------------------------------:|
-| control       |  $$ \beta_0 $$          |  $$ \beta_0 + \beta_1 $$                        |
-| treatment     | $$ \beta_0 + \beta_2 $$ |  $$ \beta_0 + \beta_1 + \beta_2 + \beta_{12}$$ |
+|               |  male                 |  female                                      |
+|---------------|:---------------------:|:--------------------------------------------:|
+| control       | $\beta_0$             |  $\beta_0 + \beta_1$                         |
+| treatment     | $\beta_0 + \beta_2$   |  $\beta_0 + \beta_1 + \beta_2 + \beta_{12}$  |
 
 We can see from this table that, for example,
 
-$$\beta_0=E(Y|(0,0))$$;
+$$\beta_0=E(Y|(0,0))$$
 
 that is, $\beta_0$ is the expected mean of the cell (0,0) (male and control).
 
-$$\beta_0 + \beta_1 =E(Y|(1,0))$$;
+$$\beta_0 + \beta_1 =E(Y|(1,0))$$
 
 that is ,$\beta_0 + \beta_1$ is the expected mean of the cell (1,0) (female and control).  And so on.
 
