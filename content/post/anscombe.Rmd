@@ -1,0 +1,52 @@
+---
+title: Plotting Anscombe's Quartet
+date: 2017-02-16
+author: Andrew Marder
+draft: true
+---
+
+I thought it might be fun to make a custom plot to use as a logo. After trying out [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe's_quartet)...
+
+```{r, message = FALSE, dpi = 50, fig.width = 10}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+data(anscombe)
+
+wide <- cbind(
+    data.frame(row = 1:nrow(anscombe)),
+    anscombe
+)
+
+long <- wide %>%
+    gather("variable", "value", -1) %>%
+    mutate(
+        dataset = as.integer(substr(variable, 2, 2)),
+        variable = substr(variable, 1, 1)
+    ) %>%
+    spread("variable", "value")
+
+g <- ggplot(long, aes(x = x, y = y)) +
+    ## geom_line(stat = "smooth", method = "lm", se = FALSE, color = "white", alpha = 0.5) +
+    geom_point(color = "white", size = 2) +
+    facet_wrap(~ dataset) +
+    theme_bw() +
+    xlab(NULL) +
+    ylab(NULL) +
+    theme(
+        panel.background = element_rect(fill = "black", color = "black"),
+        strip.background = element_blank(),
+        strip.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()
+    ) +
+    scale_x_continuous(breaks = NULL, limits = c(3.5, 19.5)) +
+    scale_y_continuous(breaks = NULL, limits = c(2, 14)) +
+    coord_fixed()
+
+## install.packages("svglite")
+ggsave("logo.svg", g)
+```
+
+![](/post/logo.svg)
