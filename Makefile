@@ -5,14 +5,14 @@ clean:
 # Build the site using blogdown #
 #################################
 
-build: clean
+build:
 	R -e "blogdown::build_site()"
 
 ######################
 # Serve site locally #
 ######################
 
-serve: clean
+serve:
 	R -e "blogdown::serve_site()"
 
 #########################
