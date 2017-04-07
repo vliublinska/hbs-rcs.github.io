@@ -1,5 +1,5 @@
 clean: 
-	rm -rf public
+	rm -rf public blogdown
 
 #################################
 # Build the site using blogdown #
