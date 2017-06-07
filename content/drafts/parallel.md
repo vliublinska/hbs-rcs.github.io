@@ -2,7 +2,8 @@
 title: Parallel Computing
 author: Andrew Marder
 layout: post
-tags: grid
+tags:
+  - grid
 ---
 
 http://wrathematics.github.io/RparallelGuide/

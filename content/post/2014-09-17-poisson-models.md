@@ -3,7 +3,8 @@ author: Xiang Ao
 layout: post
 title: A comparison of various count data models with extra zeros
 comments: true
-tags: statistics
+tags:
+  - statistics
 date: 2014-09-17
 ---
 

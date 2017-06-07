@@ -3,7 +3,8 @@ author: Xiang Ao
 layout: post
 title: A comparison of Lewbel model vs. OLS and TSLS
 comments: true
-tags: statistics
+tags:
+  - statistics
 date: 2014-09-12
 ---
 

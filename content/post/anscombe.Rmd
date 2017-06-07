@@ -3,6 +3,8 @@ title: A Custom Logo
 slug: logo
 date: 2017-02-16
 author: Andrew Marder
+tags:
+  - R
 ---
 
 I thought it would be fun to make a custom logo for the site. Below is the code I used to plot [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe's_quartet).
