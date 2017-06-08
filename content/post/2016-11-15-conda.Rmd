@@ -165,11 +165,7 @@ my_run jupyter console --kernel=ir
 
 ### Jupyter Notebook
 
-If you want to work in the browser and do interactive data visualization, the Jupyter Notebook is the way to go. It works with both Python and R, you just have to specify the language when creating a new notebook. To run the Jupyter Notebook use:
-
-```bash
-my_run jupyter notebook --browser=firefox
-```
+The Jupyter Notebook is not currently supported on the Grid for security reasons.
 
 ### RStudio Desktop
 
