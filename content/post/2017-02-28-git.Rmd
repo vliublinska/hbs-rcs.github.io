@@ -9,14 +9,20 @@ tags:
 
 I believe the firewall is blocking SSH connections from the grid logging into GitHub. So, the following will not work out of the box:
 
-    git clone git@github.com:your/private.git
+```bash
+git clone git@github.com:your/private.git
+```
 
 When I try to clone over HTTPS, I get a 403 error. Reading [this page](https://help.github.com/articles/https-cloning-errors/) suggests that the version of Git on the grid (1.7.1) might be too old (1.7.10 is preferred).
 
 As a crazy workaround, it looks like we can use SSH over the HTTPS port. Follow the instructions on [this page](https://help.github.com/articles/using-ssh-over-the-https-port/) to enable SSH over HTTPS for GitHub. One issue they don't mention on that page is I needed to change the permissions on my `~/.ssh/config` file for SSH to work:
 
-    chmod 600 ~/.ssh/config
+```bash
+chmod 600 ~/.ssh/config
+```
 
 For all of this to work, you need to set up your public and private SSH keys to the grid. When all of this is done, you can use the following to clone a private repo:
 
-    git clone git@github.com:your/repo.git
+```bash
+git clone git@github.com:your/repo.git
+```
