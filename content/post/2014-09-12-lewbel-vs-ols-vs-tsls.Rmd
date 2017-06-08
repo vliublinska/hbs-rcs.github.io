@@ -79,7 +79,7 @@ sfStop()
 names(results) <- c('lm','lewbel','tsls')
 forshiny <- cbind(data.grid, results)
 ## write out for use in shiny.
-write.csv(forshiny, 'results.csv')
+## write.csv(forshiny, 'results.csv')
 ```
 
 The data generating processes in this simulation study are:  $$y_2$$ is the dependent variable.

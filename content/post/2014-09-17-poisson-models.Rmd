@@ -142,7 +142,7 @@ sfStop()
 
 forshiny <- cbind(data.grid, results)
 # write out for use in shiny.
-write.csv(forshiny, 'results.csv')
+# write.csv(forshiny, 'results.csv')
 ```    
 
 Count data models can be used even if data is not "counts"; for example, some positive non-integer numbers.  In fact, Poisson model is consistent even if data is not Poisson-distributed, if the model specification is correct on modeling the log of expected counts.  We simulate both scenarios:  Case 1, data is generated from a Poisson process.  Case 2, data is generated from a Normal distribution, but we use count data models to model it.  The above code is for case 2.
