@@ -1,8 +1,8 @@
 ---
 title: Blog Features
 slug: features
-date: 2017-06-08
 author: Andrew Marder
+draft: true
 tags:
   - R
 ---
