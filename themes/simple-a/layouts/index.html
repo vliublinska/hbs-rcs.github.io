@@ -33,7 +33,7 @@
               <div class="post-after">
                   <div class="tags">
                     {{ range .Params.tags }}
-                        <a href="{{ $baseurl }}/tags/{{ . | urlize }}">{{ . }}</a>              
+                        <a href="/tags/{{ . | urlize }}">{{ . }}</a>              
                     {{ end }}
                   </div>
               </div>
