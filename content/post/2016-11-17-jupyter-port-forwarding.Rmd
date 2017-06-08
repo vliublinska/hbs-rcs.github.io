@@ -1,6 +1,7 @@
 ---
 title: Connecting to Jupyter Notebooks on the Grid
 author: Andrew Marder
+draft: true
 tags:
   - grid
 date: 2016-11-17
