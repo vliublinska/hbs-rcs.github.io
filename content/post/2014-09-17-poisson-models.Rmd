@@ -1,6 +1,5 @@
 ---
 author: Xiang Ao
-layout: post
 title: A comparison of various count data models with extra zeros
 comments: true
 tags:

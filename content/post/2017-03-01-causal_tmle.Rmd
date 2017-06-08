@@ -1,6 +1,5 @@
 ---
 author: Xiang Ao
-layout: post
 title: Use machine learning for causal effect in observational study
 date: 2017-03-01
 comments: true

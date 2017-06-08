@@ -1,6 +1,5 @@
 ---
 author: Xiang Ao
-layout: post
 title: Marginal effects in models with fixed effects
 comments: true
 tags:

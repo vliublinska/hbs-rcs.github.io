@@ -1,11 +1,12 @@
 ---
 title: Installing Python and R packages on the Grid
 author: Andrew Marder
-layout: post
 tags:
   - grid
 date: 2016-11-15
 ---
+
+This post was last updated on `r format(Sys.Date(), "%Y-%m-%d")`.
 
 If you think Python 2.6.6 or R 3.0.2 sound old, I have good
 news for you. The [Conda](http://conda.pydata.org/docs/) package manager makes it easy

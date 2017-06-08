@@ -1,6 +1,5 @@
 ---
 author: Xiang Ao
-layout: post
 title: Interpreting interaction term in a regression model
 comments: true
 tags:

@@ -1,6 +1,5 @@
 ---
 author: Xiang Ao
-layout: post
 title: A comparison of Lewbel model vs. OLS and TSLS
 comments: true
 tags:

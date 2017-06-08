@@ -1,6 +1,5 @@
 ---
 author: Xiang Ao
-layout: post
 title: Interaction term in a non-linear model
 comments: true
 tags:
