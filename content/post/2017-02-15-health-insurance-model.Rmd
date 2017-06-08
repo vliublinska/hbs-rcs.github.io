@@ -1,6 +1,5 @@
 ---
 title: Health Insurance Model
-date: '2017-02-15'
 author: 'Andrew Marder'
 draft: true
 ---

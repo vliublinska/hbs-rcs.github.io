@@ -4,4 +4,4 @@
 /content/drafts/*.html
 
 # images created for draft posts
-/static/drafts/
+/static/post/
