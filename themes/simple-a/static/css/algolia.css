@@ -9,5 +9,6 @@
 }
 
 #search-input:focus {
-    border-color: #F04A9C;
+    border-color: #fa5305;
+    outline: none;
 }
