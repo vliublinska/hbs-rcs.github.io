@@ -18,5 +18,7 @@
 	        {{ .Content }}
 	    </div>
 	    <!-- END CONTENT -->
+        {{ template "_internal/disqus.html" . }}
+
 	{{ template "theme/chrome/about.html" . }}
 	{{ template "theme/chrome/footer.html" . }}
