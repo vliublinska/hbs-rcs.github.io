@@ -5,7 +5,10 @@ cache: packages
 addons:
   apt:
     packages:
-      - hugo
+      - snap
+
+before_install:
+  - snap install hugo
 
 script:
   - make build
