@@ -10,5 +10,5 @@ Imports:
     pscl,
     tidyr,
     tmle
-
-Remotes: rstudio/blogdown
+Remotes:
+    rstudio/blogdown
