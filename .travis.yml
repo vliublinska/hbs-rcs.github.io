@@ -2,13 +2,9 @@ language: r
 sudo: false
 cache: packages
 
-addons:
-  apt:
-    packages:
-      - snap
-
 before_install:
-  - snap install hugo
+  - wget https://github.com/spf13/hugo/releases/download/v0.21/hugo_0.21_Linux-64bit.tar.gz
+  - tar xf hugo_0.21_Linux-64bit.tar.gz
 
 script:
   - make build
