@@ -8,6 +8,7 @@ Imports:
     knitr,
     msm,
     pscl,
+    snowfall,
     tidyr,
     tmle
 Remotes:
