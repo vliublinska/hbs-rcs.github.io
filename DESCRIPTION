@@ -1,13 +1,17 @@
 Imports:
     MASS,
+    arm,
     blogdown,
     dplyr,
+    gam,
+    gbm,
     ggplot2,
     glmnet,
     ivlewbel,
     knitr,
     msm,
     pscl,
+    randomForest,
     snowfall,
     tidyr,
     tmle
