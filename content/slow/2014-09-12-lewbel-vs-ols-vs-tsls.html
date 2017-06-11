@@ -1,0 +1,101 @@
+---
+author: Xiang Ao
+title: A comparison of Lewbel model vs. OLS and TSLS
+comments: true
+tags:
+  - statistics
+date: 2014-09-12
+---
+
+
+
+<p>This post is inspired by <a href="http://diffuseprior.wordpress.com/2014/05/15/the-ivlewbel-package-a-new-way-to-tackle-endogenous-regressor-models/">diffuse prior</a></p>
+<p><a href="https://www2.bc.edu/~lewbel/simhet16.pdf">Lewbel’s 2012 paper</a> proposed an estimator based on heteroscedasticity to address the problem of endogeneity without an instrument. This problem has been an issue for many (maybe most) empirical researchers with observational data. People are challenged with endogeneity and they have difficulty locating a valid instrument (who doesn’t?).</p>
+<p>Using the “ivlewbel” package in R, I compare the performance of Lewbel’s estimator with OLS and TSLS (two stage least square) estimators, with different values of sample size, and heteroscedasticity.</p>
+<pre class="r"><code>library(ivlewbel)
+require(snowfall)
+set.seed(666)
+
+## initialize parallel cores.
+sfInit( parallel=TRUE, cpus=12)
+
+gen.sim &lt;- function(df){
+    k &lt;- df[&#39;k&#39;]
+    nobs &lt;- df[&#39;nobs&#39;]
+    x&lt;-runif(nobs, min=-1, max=1)
+    u &lt;- rnorm(nobs,0,1)
+    u1 &lt;- rnorm(nobs,0,1)
+    u2 &lt;- rnorm(nobs,0,1)
+    x1 &lt;-runif(nobs, min=-1, max=1)
+    x2 &lt;- rnorm(nobs,0,1)
+    z &lt;- rnorm(nobs,0,1)
+    e1 = exp(.3*k*(x+x1))*u1
+    e2 = u2
+
+    ## y1 is the endogenous variable; z is the instrument; x1 is
+    ## omitted but determines heteroskedasticity of y1; e1 e2 are
+    ## correlated because of common factor of u; x is the only
+    ## observed exogenous variable.  The true coefficient on y1 should
+    ## be 1.  lewbel model use x as both the exogenous variable and
+    ## the heteroscedasticity factor.  tsls assumes we have an
+    ## instrument z.  k is to adjust for degree of heteroscedasticity.
+    y1 = 1 + z + x + x1 +  e1
+    y2 = 1 + y1  + x + x1 +  e2
+    data = data.frame(y2, y1, x1, x2, z, x)
+
+    lewbel.model &lt;- lewbel(formula = y2 ~ y1  | x   | x  , data = data)
+    lm.model &lt;- lm(y2 ~ y1 + x, data=data)
+    tsls.model &lt;- tsls(y2 ~ y1 + x   , ~ z + x  , data=data)
+
+    lm.y1 &lt;- summary(lm.model)$coefficients[&#39;y1&#39;,&#39;Estimate&#39;]-1
+    tsls.y1 &lt;- tsls.model$coefficients[&#39;y1&#39;]-1
+    lewbel.y1 &lt;- lewbel.model$coef.est[&#39;y1&#39;, &#39;Estimate&#39;]-1
+    return(c(lm=lm.y1, lewbel=lewbel.y1,tsls=tsls.y1))
+}
+
+
+## set parameter space
+sim.grid = seq(1,100,1)
+k.grid=seq(1,10,1)
+nobs.grid = ceiling(exp(seq(4, 8, 1))/100)*100
+data.grid &lt;- expand.grid(nobs.grid, sim.grid, k.grid)
+names(data.grid) &lt;- c(&#39;nobs&#39;, &#39;nsim&#39;, &#39;k&#39;)
+
+## export functions to the slaves
+## export data to the slaves if necessary
+sfExport(list=list(&quot;gen.sim&quot;))
+
+## export function to the slaves
+sfLibrary(ivlewbel)
+
+## parallel computing
+results &lt;- data.frame(t(sfApply(data.grid, 1, gen.sim)))
+
+## stop the cluster
+sfStop()
+
+names(results) &lt;- c(&#39;lm&#39;,&#39;lewbel&#39;,&#39;tsls&#39;)
+forshiny &lt;- cbind(data.grid, results)
+## write out for use in shiny.
+## write.csv(forshiny, &#39;results.csv&#39;)</code></pre>
+<p>The data generating processes in this simulation study are: <span class="math display">\[y_2\]</span> is the dependent variable.</p>
+<p><span class="math display">\[
+y_2 = y_1 + x + x_1 + e_2
+\]</span></p>
+<p><span class="math display">\[
+y_1 = z + x + x_1 + e_1
+\]</span></p>
+<p>Here <span class="math display">\[e_1\]</span> and <span class="math display">\[e_2\]</span> are the error terms. Among the independent variables of <span class="math display">\[y_2\]</span>, <span class="math display">\[x\]</span> is observed; <span class="math display">\[x_1\]</span> is unobserved, <span class="math display">\[z\]</span> is the intended instruments. <span class="math display">\[y_1\]</span> is the endogenous variable, since it’s determined by <span class="math display">\[x_1\]</span>, and <span class="math display">\[x_1\]</span> is part of <span class="math display">\[y_2\]</span>’s error term since <span class="math display">\[x_1\]</span> is unobserved. If we have <span class="math display">\[z\]</span>, then we can use TSLS to estimate the model. If not, then we’ll try Lewbel’s model to see if it works.</p>
+<p>The ‘gen_sim’ function returns the three estimates (OLS, TSLS and Lewbel). <span class="math display">\[e_1\]</span> is assumed to have some degree of heteroscedasticity:</p>
+<p><span class="math display">\[
+e_1 = e^{0.3*k*(x+x_1)}*u_1
+\]</span></p>
+<p>where <span class="math display">\[u_1\]</span> is a standard normal variable. <span class="math display">\[k\]</span> is a variable used to adjust for degree of heteroscedasticity. Here we assume we know a variable that determines the heteroscedasticity: <span class="math display">\[x\]</span>. But <span class="math display">\[x_1\]</span> remains unobserved.</p>
+<p>We then simulate 100 times with <span class="math display">\[k\]</span> ranging from 1 to 10; number of observations from <span class="math display">\[e^4\]</span> to <span class="math display">\[e^8\]</span>.</p>
+<p>Since there are many simulations, we used “snowfall” library to speed things up.</p>
+<p>For raw code, please visit <a href="https://github.com/xiangao/lewbel2">here</a>.</p>
+<center>
+<iframe src="https://xiangao.shinyapps.io/lewbel2/" style="border: none; width: 700px; height: 700px;">
+</iframe>
+</center>
+<p>We can see at moderate degree of heteroscedasticity, Lewbel’s estimator performs well, at reasonably large sample size. TSLS performs well since we assume we observe <span class="math display">\[z\]</span>. At very high degree of heteroscedasticity, both OLS and Lewbel’s estimator perform well. My explanation is that when there is very high degree of heteroscedasticity, heteroscedasticity just outplays endogeneity so that OLS’ bias goes down (since we know that OLS under heteroscedasticity is consistent.), with large sample size.</p>
