@@ -1,19 +1,20 @@
 clean: 
 	rm -rf public
 
-######################
-# Serve site locally #
-######################
+#######################################
+# Serve site locally, includes drafts #
+#######################################
 
 serve:
 	R -e "blogdown::serve_site()"
 
-#################################
-# Build the site using blogdown #
-#################################
+#########################################
+# Build the site, no drafts             #
+# To preview the site use `hugo server` #
+#########################################
 
 build:
-	Rscript R/build_site.R 2>/dev/null | grep -i ".Rmd:"
+	R -e "library(blogdown)" -e "build_site(local = TRUE)" -e "hugo_build(local = FALSE)"
 
 #########################
 # Deploy site to GitHub #

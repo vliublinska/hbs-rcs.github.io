@@ -1,10 +1,9 @@
 /blogdown/
 /public/
-/content/post/*.html
-/content/drafts/*.html
 
-# images created for draft posts
-/static/post/
+# output files from rendering fast posts
+/content/fast/*.html
+/static/fast/
 
 .Rhistory
 .DS_Store
