@@ -2,6 +2,7 @@ Imports:
     blogdown,
     dplyr,
     ggplot2,
+    svglite,
     tidyr
 Suggests:
     MASS,
