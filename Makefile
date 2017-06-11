@@ -13,7 +13,7 @@ serve:
 #################################
 
 build:
-	R -e "blogdown::build_site()"
+	Rscript R/build_site.R 2>/dev/null | grep -i ".Rmd:"
 
 #########################
 # Deploy site to GitHub #

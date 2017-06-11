@@ -8,3 +8,5 @@ render_page <- function(input) {
 
 ## https://stackoverflow.com/a/8743858/3756632
 assignInNamespace("render_page", render_page, "blogdown")
+
+blogdown::build_site()
