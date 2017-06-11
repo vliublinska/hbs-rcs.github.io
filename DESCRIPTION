@@ -1,19 +1,19 @@
 Imports:
-    MASS,
-    arm,
     blogdown,
     dplyr,
+    ggplot2,
+    tidyr
+Suggests:
+    MASS,
+    arm,
     gam,
     gbm,
-    ggplot2,
     glmnet,
     ivlewbel,
-    knitr,
     msm,
     pscl,
     randomForest,
     snowfall,
-    tidyr,
     tmle
 Remotes:
     rstudio/blogdown
