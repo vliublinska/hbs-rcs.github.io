@@ -1,0 +1,153 @@
+---
+author: Xiang Ao
+title: Use machine learning for causal effect in observational study
+date: 2017-03-01
+comments: true
+tags:
+  - statistics
+  - R
+---
+
+
+
+<div id="a-simulation-for-ols-model" class="section level1">
+<h1>A simulation for OLS model</h1>
+<p>In an observational study, we need to assume we have the functional form to get causal effect estimated correctly, in addtion to the assumption of treatment being exogenous.</p>
+<pre class="r"><code>library(MASS)
+library(ggplot2)
+library(dplyr)
+library(tmle)
+library(glmnet)
+
+set.seed(366)
+
+nobs &lt;- 2000
+xw &lt;- .8
+xz &lt;- .5
+zw &lt;- .6
+nrow &lt;- 3
+ncol &lt;- 3
+covarMat = matrix( c(1^2, xz^2, xw^2, xz^2, 1^2, zw^2,  xw^2, zw^2, 1^2 ) , nrow=ncol , ncol=ncol )
+
+mu &lt;- rep(0,3)
+rawvars &lt;- mvrnorm(n=nobs, mu=mu, Sigma=covarMat)
+df &lt;- tbl_df(rawvars)
+names(df) &lt;- c(&#39;x&#39;,&#39;z&#39;,&#39;w&#39;)
+df &lt;- df %&gt;%
+    mutate(log.x=log(x^2), log.z=log(z^2), log.w=log(w^2), z.sqr=z^2, w.sqr=w^2) %&gt;%
+    mutate(g.var= log.w  + rnorm(nobs)) %&gt;%
+    mutate(A = rbinom(nobs, 1, 1/(1+exp((g.var))))) %&gt;%
+    mutate(y0=rnorm(nobs) + log.x) %&gt;%
+    mutate(tau.true = 2  + rnorm(nobs), y1=y0+tau.true, treat=A, y = treat*y1 + (1-treat)*y0)
+lm1 &lt;- lm(y ~ A + log.w + log.x , data=df)
+summary(lm1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ A + log.w + log.x, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.5506 -0.8372 -0.0154  0.8502  4.1624 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.01267    0.04778   0.265    0.791    
+## A            1.93171    0.06580  29.355   &lt;2e-16 ***
+## log.w        0.01105    0.01428   0.774    0.439    
+## log.x        1.00162    0.01353  74.030   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.255 on 1996 degrees of freedom
+## Multiple R-squared:  0.758,  Adjusted R-squared:  0.7576 
+## F-statistic:  2084 on 3 and 1996 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>lm2 &lt;- lm(y ~ A , data=df)
+summary(lm2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ A, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9102  -1.3822   0.3241   1.6933   6.4046 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.92139    0.08992  -10.25   &lt;2e-16 ***
+## A            1.38964    0.11366   12.23   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.459 on 1998 degrees of freedom
+## Multiple R-squared:  0.06961,    Adjusted R-squared:  0.06915 
+## F-statistic: 149.5 on 1 and 1998 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>lm3 &lt;- lm(y ~ A + w, data=df)
+summary(lm3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ A + w, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9112  -1.3795   0.3139   1.6863   6.3468 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.92056    0.08995 -10.234   &lt;2e-16 ***
+## A            1.38860    0.11368  12.215   &lt;2e-16 ***
+## w           -0.03351    0.05286  -0.634    0.526    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.46 on 1997 degrees of freedom
+## Multiple R-squared:  0.0698, Adjusted R-squared:  0.06887 
+## F-statistic: 74.93 on 2 and 1997 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>lm4 &lt;- lm(y ~ A + w + x, data=df)
+summary(lm4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ A + w + x, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9109  -1.4047   0.3177   1.6926   6.4528 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.91759    0.08995 -10.201   &lt;2e-16 ***
+## A            1.38335    0.11372  12.164   &lt;2e-16 ***
+## w           -0.09260    0.06827  -1.356    0.175    
+## x            0.09947    0.07275   1.367    0.172    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.459 on 1996 degrees of freedom
+## Multiple R-squared:  0.07067,    Adjusted R-squared:  0.06927 
+## F-statistic:  50.6 on 3 and 1996 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>In this example, treatment assignment process is determined by logged w, and outcome is dtermined by logged x and treatment. However, what we observe is w and x. In observational studies, this happens all the time. In fact, this is an ideal situation, that we observe variables that are determinants of outcome, although we are not sure about the functional form that determines the outcome. However, this example shows that unless we have observed exactly the factors themselves (in this case logged x, w, which determines the DGP), we have biased estimates of the true treatment effect.</p>
+<p>Model 1 is the only model with reasonable estimate of treatment effect (which is 2 in this case). Model 2 is a model with endogeneity: A is correlated with the missing variabel logged x. Model 3 and 4 we have x and w, but not logged, therefore still biased.</p>
+<p>The lesson here is the functional form does matter. However, we have no way of knowing the functional form. What can we do here?</p>
+<pre class="r"><code>Q.SL.library &lt;- c(&quot;SL.randomForest&quot;, &quot;SL.glmnet&quot;,&quot;SL.loess&quot;,&quot;SL.glm&quot;,&quot;SL.glm.interaction&quot;, &quot;SL.rpart&quot;,&quot;SL.nnet&quot;,&quot;SL.bayesglm&quot;,&quot;SL.gam&quot;,&quot;SL.gbm&quot;,&quot;SL.step&quot;,&quot;SL.mean&quot;)
+g.SL.library &lt;- c(&quot;SL.randomForest&quot;, &quot;SL.glmnet&quot;,&quot;SL.glm&quot;,&quot;SL.glm.interaction&quot;, &quot;SL.rpart&quot;,&quot;SL.nnet&quot;,&quot;SL.bayesglm&quot;,&quot;SL.gam&quot;,&quot;SL.gbm&quot;,&quot;SL.step&quot;,&quot;SL.mean&quot;)
+
+# this one is good since both Q and g are correct (including z in it)
+tmle1 &lt;- tmle(Y = df$y, A = df$treat, W = df[,c(&#39;x&#39;,&#39;w&#39;)], g.SL.library = g.SL.library , Q.SL.library = Q.SL.library)
+tmle1</code></pre>
+<pre><code>##  Additive Effect
+##    Parameter Estimate:  2.015
+##    Estimated Variance:  0.0025985
+##               p-value:  &lt;2e-16
+##     95% Conf Interval: (1.9151, 2.115)</code></pre>
+<pre class="r"><code>tmle2 &lt;- tmle(Y = df$y, A = df$treat, W = df[,c(&#39;x&#39;,&#39;w&#39;, &#39;z&#39;)], g.SL.library = g.SL.library , Q.SL.library = Q.SL.library)
+tmle2</code></pre>
+<pre><code>##  Additive Effect
+##    Parameter Estimate:  2.0263
+##    Estimated Variance:  0.0029254
+##               p-value:  &lt;2e-16
+##     95% Conf Interval: (1.9202, 2.1323)</code></pre>
+<p>We use <a href="http://biostats.bepress.com/ucbbiostat/paper275/">Mark van der Laan’s TMLE method</a>. It uses <a href="http://biostats.bepress.com/ucbbiostat/paper222/">SuperLearner</a> as the initial estimator. It’s an ensemble of mulitple machine learning algorithms. Therefore it does not need to assume the functional form of the DGP. Even if we don’t have the variables that determines the DGP of outcome, if we observe some functions (even nonlinear functions) of these variables, we can still get reasonable estimates of the treatment effect.</p>
+<p>In this example, we used multiple popular machine learning algorithms in modeling both treatment assingment process and the outcome process. The first TMLE model is with x and w (note not the logged x and w which are in the true DGP), the second one with an additional variable z.</p>
+<p>It seems that TMLE results are less biased than the linear models with x and w. It may not be better than the linear model with logged x and w, but in empirical studies, we often cannot assume we have the variables in the DGP, but only some proxy of the variables in the DGP. I’ll do more simulations to see whether TMLE does perform better in the situation that we are not sure about the functional form. We should expect that is the case.</p>
+<p>So far TMLE can only be used when treatment is binary variable.</p>
+<p>It’s about time we embrace machine learning techniques into studies of caual effect in observational studies.</p>
+</div>
