@@ -4,7 +4,7 @@ title: Marginal effects in models with fixed effects
 comments: true
 tags:
   - statistics
-  - R
+  - Stata
 date: 2017-02-14
 ---
 
@@ -26,7 +26,6 @@ xtreg price c.mpg##c.trunk, fe
 margins , dydx(mpg)
 reg price c.mpg##c.trunk i.rep78
 margins , dydx(mpg)
-
 ```
 
 All is fine.

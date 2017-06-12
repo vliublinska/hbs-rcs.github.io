@@ -4,7 +4,7 @@ title: Marginal effects in models with fixed effects
 comments: true
 tags:
   - statistics
-  - R
+  - Stata
 date: 2017-02-14
 ---
 
@@ -21,8 +21,102 @@ xtset rep78
 xtreg price c.mpg##c.trunk, fe
 margins , dydx(mpg)
 reg price c.mpg##c.trunk i.rep78
-margins , dydx(mpg)
-</code></pre>
+margins , dydx(mpg)</code></pre>
+<pre><code>## 
+## . clear
+## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . xtset rep78
+##        panel variable:  rep78 (unbalanced)
+## 
+## . xtreg price c.mpg##c.trunk, fe
+## 
+## Fixed-effects (within) regression               Number of obs     =         69
+## Group variable: rep78                           Number of groups  =          5
+## 
+## R-sq:                                           Obs per group:
+##      within  = 0.2570                                         min =          2
+##      between = 0.0653                                         avg =       13.8
+##      overall = 0.2237                                         max =         30
+## 
+##                                                 F(3,61)           =       7.03
+## corr(u_i, Xb)  = -0.4133                        Prob &gt; F          =     0.0004
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -98.12003   226.8708    -0.43   0.667    -551.7763    355.5362
+##        trunk |   295.0544   343.3934     0.86   0.394    -391.6032     981.712
+##              |
+##        c.mpg#|
+##      c.trunk |  -12.23318   15.94713    -0.77   0.446    -44.12143    19.65506
+##              |
+##        _cons |    7574.85   5321.325     1.42   0.160    -3065.797     18215.5
+## -------------+----------------------------------------------------------------
+##      sigma_u |   992.2156
+##      sigma_e |  2631.2869
+##          rho |  .12449059   (fraction of variance due to u_i)
+## ------------------------------------------------------------------------------
+## F test that all u_i=0: F(4, 61) = 0.86                       Prob &gt; F = 0.4948
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : Conventional
+## 
+## Expression   : Linear prediction, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -268.4981   74.12513    -3.62   0.000    -413.7807   -123.2156
+## ------------------------------------------------------------------------------
+## 
+## . reg price c.mpg##c.trunk i.rep78
+## 
+##       Source |       SS           df       MS      Number of obs   =        69
+## -------------+----------------------------------   F(7, 61)        =      3.19
+##        Model |   154453046         7  22064720.8   Prob &gt; F        =    0.0061
+##     Residual |   422343913        61  6923670.71   R-squared       =    0.2678
+## -------------+----------------------------------   Adj R-squared   =    0.1838
+##        Total |   576796959        68  8482308.22   Root MSE        =    2631.3
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -98.12003   226.8708    -0.43   0.667    -551.7763    355.5362
+##        trunk |   295.0544   343.3934     0.86   0.394    -391.6032     981.712
+##              |
+##        c.mpg#|
+##      c.trunk |  -12.23318   15.94713    -0.77   0.446    -44.12143    19.65506
+##              |
+##        rep78 |
+##           2  |   438.0002   2161.922     0.20   0.840    -3885.031    4761.031
+##           3  |   987.1363   2022.606     0.49   0.627    -3057.315    5031.587
+##           4  |   1240.944   2046.417     0.61   0.547     -2851.12    5333.008
+##           5  |    2605.83   2161.837     1.21   0.233    -1717.031    6928.691
+##              |
+##        _cons |   6355.731   5209.899     1.22   0.227    -4062.105    16773.57
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OLS
+## 
+## Expression   : Linear prediction, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -268.4981   74.12513    -3.62   0.001    -416.7205   -120.2758
+## ------------------------------------------------------------------------------</code></pre>
 <p>All is fine.</p>
 </div>
 <div id="marginal-effects-in-a-non-linear-model" class="section level1">
@@ -37,6 +131,112 @@ margins , dydx(mpg) predict(nu0)
 poisson price mpg trunk i.rep78
 margins , dydx(mpg)
 </code></pre>
+<pre><code>## 
+## . clear
+## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . xtset rep78
+##        panel variable:  rep78 (unbalanced)
+## 
+## . xtpoisson price mpg trunk, fe
+## 
+## Iteration 0:   log likelihood = -39282.052  
+## Iteration 1:   log likelihood = -27527.055  
+## Iteration 2:   log likelihood = -27518.944  
+## Iteration 3:   log likelihood = -27518.944  
+## 
+## Conditional fixed-effects Poisson regression    Number of obs     =         69
+## Group variable: rep78                           Number of groups  =          5
+## 
+##                                                 Obs per group:
+##                                                               min =          2
+##                                                               avg =       13.8
+##                                                               max =         30
+## 
+##                                                 Wald chi2(2)      =   22890.68
+## Log likelihood  = -27518.944                    Prob &gt; chi2       =     0.0000
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0450221   .0003814  -118.05   0.000    -.0457696   -.0442746
+##        trunk |   .0047349   .0004772     9.92   0.000     .0037996    .0056702
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OIM
+## 
+## Expression   : Linear prediction, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0450221   .0003814  -118.05   0.000    -.0457696   -.0442746
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg) predict(nu0)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OIM
+## 
+## Expression   : Predicted number of events (assuming u_i=0), predict(nu0)
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0190939   .0001245  -153.35   0.000    -.0193379   -.0188498
+## ------------------------------------------------------------------------------
+## 
+## . poisson price mpg trunk i.rep78
+## 
+## Iteration 0:   log likelihood = -27550.942  
+## Iteration 1:   log likelihood = -27550.912  
+## Iteration 2:   log likelihood = -27550.912  
+## 
+## Poisson regression                              Number of obs     =         69
+##                                                 LR chi2(6)        =   24962.86
+##                                                 Prob &gt; chi2       =     0.0000
+## Log likelihood = -27550.912                     Pseudo R2         =     0.3118
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0450221   .0003814  -118.05   0.000    -.0457696   -.0442746
+##        trunk |   .0047349   .0004772     9.92   0.000     .0037996    .0056702
+##              |
+##        rep78 |
+##           2  |   .1476657   .0117935    12.52   0.000     .1245509    .1707805
+##           3  |   .2295466   .0111741    20.54   0.000     .2076458    .2514474
+##           4  |   .2726354   .0112656    24.20   0.000     .2505552    .2947155
+##           5  |   .4682657   .0115137    40.67   0.000     .4456992    .4908321
+##              |
+##        _cons |   9.323117   .0149274   624.57   0.000      9.29386    9.352374
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OIM
+## 
+## Expression   : Predicted number of events, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -276.7079   2.382193  -116.16   0.000    -281.3769   -272.0389
+## ------------------------------------------------------------------------------
+## 
+## .</code></pre>
 <p>In this example, “xtpoisson, fe” and “poisson i.rep78” returns the same results. Fixed effect Poisson model (sometimes called conditional fixed effect Poisson) is the same models as a Poisson model with dummies, just like a linear model (OLS with dummies is the same as fixed effect OLS). Poisson model and OLS are unique in this sense that there is no “incidental paramater” problem.</p>
 <p>We see in this example, margins commands do not return the same marginal effects, even though the models are the same. The reason behind this is that in a conditional fixed effect Poisson, the fixed effects are not estimated (they are not in the final likelihood function that gets estimated). Therefore, we’ll have to make a decision what values to use as the values of the fixed effects. “margins, predict(nu0)” simply set all fixed effects to zero. On the other hand, margins after Poisson model with dummies does not do that. The fixed effect in that case gets estimated. Therefore the marginal effects in that case make more sense.</p>
 <p>So our advise for a conditioanl Poisson model is that we should not use margins to calculate marginal effects afterwards; instead, we should simply stick with the original coefficient estimates.</p>
