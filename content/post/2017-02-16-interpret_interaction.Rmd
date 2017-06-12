@@ -4,7 +4,7 @@ title: Interpreting interaction term in a regression model
 comments: true
 tags:
   - statistics
-  - R
+  - Stata
 date: 2017-02-14
 ---
 
@@ -54,7 +54,7 @@ In some other situations, the three coefficients are equally important.  It depe
 
 Let's take a look from a sample example in Stata:
 
-```{r stata-chunk, engine='stata', engine.path='/usr/local/bin/stata', cache=TRUE}
+```{r stata-chunk, engine='stata', engine.path='/usr/local/bin/stata'}
 webuse union3
 reg ln_wage i.union##i.black, r
 margins union#black
@@ -85,7 +85,7 @@ When we have dummy variable interacting with continuous variable, only continuou
 Again, Stata's margins command is helpful.
 
 
-```{r stata-chunk2, engine='stata', engine.path='/usr/local/bin/stata', cache=TRUE}
+```{r stata-chunk2, engine='stata', engine.path='/usr/local/bin/stata'}
 sysuse auto
 sum mpg
 gen mpg_centered=mpg-r(mean)
@@ -93,11 +93,16 @@ sum mpg_centered
 reg price i.foreign##c.mpg_centered
 margins foreign, at(mpg_centered=(-3 (1) 3))
 marginsplot
-graph export temp.eps, replace
-!convert -density 125 temp.eps temp.png
-!rm temp.eps
+graph export marginsplot.eps, replace
 ```
 
-![](/post/temp.png)
+```{r, echo=FALSE, results="hide", engine='stata', engine.path='/usr/local/bin/stata'}
+!convert -density 125 marginsplot.eps marginsplot.png
+!rm marginsplot.eps
+!mkdir -p ../../static/post/2017-02-16-interpret_interaction_files
+!mv marginsplot.png ../../static/post/2017-02-16-interpret_interaction_files/
+```
+
+![](/post/2017-02-16-interpret_interaction_files/marginsplot.png)
 
 In this example, the graph shows the predicted price for foreign and domestic cars at different level of mpg.

@@ -4,7 +4,7 @@ title: Interpreting interaction term in a regression model
 comments: true
 tags:
   - statistics
-  - R
+  - Stata
 date: 2017-02-14
 ---
 
@@ -56,6 +56,70 @@ reg ln_wage i.union##i.black, r
 margins union#black
 margins union#black, pwcompare
 </code></pre>
+<pre><code>## 
+## . webuse union3
+## (National Longitudinal Survey.  Young Women 14-26 years of age in 1968)
+## 
+## . reg ln_wage i.union##i.black, r
+## 
+## Linear regression                               Number of obs     =      1,244
+##                                                 F(3, 1240)        =      34.76
+##                                                 Prob &gt; F          =     0.0000
+##                                                 R-squared         =     0.0762
+##                                                 Root MSE          =     .37699
+## 
+## ------------------------------------------------------------------------------
+##              |               Robust
+##      ln_wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##      1.union |   .2045053   .0291682     7.01   0.000     .1472808    .2617298
+##      1.black |  -.1709034   .0308067    -5.55   0.000    -.2313425   -.1104644
+##              |
+##  union#black |
+##         1 1  |   .0386275   .0516609     0.75   0.455     -.062725      .13998
+##              |
+##        _cons |   1.657525   .0138278   119.87   0.000     1.630396    1.684653
+## ------------------------------------------------------------------------------
+## 
+## . margins union#black
+## 
+## Adjusted predictions                            Number of obs     =      1,244
+## Model VCE    : Robust
+## 
+## Expression   : Linear prediction, predict()
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |     Margin   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##  union#black |
+##         0 0  |   1.657525   .0138278   119.87   0.000     1.630396    1.684653
+##         0 1  |   1.486621    .027529    54.00   0.000     1.432613     1.54063
+##         1 0  |    1.86203   .0256822    72.50   0.000     1.811644    1.912415
+##         1 1  |   1.729754   .0325611    53.12   0.000     1.665873    1.793635
+## ------------------------------------------------------------------------------
+## 
+## . margins union#black, pwcompare
+## 
+## Pairwise comparisons of adjusted predictions
+## Model VCE    : Robust
+## 
+## Expression   : Linear prediction, predict()
+## 
+## -----------------------------------------------------------------
+##                 |            Delta-method         Unadjusted
+##                 |   Contrast   Std. Err.     [95% Conf. Interval]
+## ----------------+------------------------------------------------
+##     union#black |
+## (0 1) vs (0 0)  |  -.1709034   .0308067     -.2313425   -.1104644
+## (1 0) vs (0 0)  |   .2045053   .0291682      .1472808    .2617298
+## (1 1) vs (0 0)  |   .0722294   .0353756      .0028268     .141632
+## (1 0) vs (0 1)  |   .3754087   .0376487      .3015466    .4492709
+## (1 1) vs (0 1)  |   .2431328   .0426388      .1594807     .326785
+## (1 1) vs (1 0)  |  -.1322759   .0414705     -.2136359   -.0509159
+## -----------------------------------------------------------------
+## 
+## .</code></pre>
 <p>What we get by using “margins union#black” is the four cell means of <span class="math inline">\(E(Y)\)</span>, in this case, log of wage. Then “margins union#black, pwcompare” tells us all pairwise comparison of these four cell means. Instead of only paying attention to the interaction coefficient, in this case we might be interested in some comparisons of the four different situations of union and black. In fact, in this example, despite the interaction term being insignificant, all six comparisons of the cell means turn out to have 95% confidence intervals that do not include zero.</p>
 </div>
 <div id="interaction-with-continuous-variables" class="section level1">
@@ -79,11 +143,100 @@ sum mpg_centered
 reg price i.foreign##c.mpg_centered
 margins foreign, at(mpg_centered=(-3 (1) 3))
 marginsplot
-graph export temp.eps, replace
-!convert -density 125 temp.eps temp.png
-!rm temp.eps</code></pre>
+graph export marginsplot.eps, replace</code></pre>
+<pre><code>## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . sum mpg
+## 
+##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+## -------------+---------------------------------------------------------
+##          mpg |         74     21.2973    5.785503         12         41
+## 
+## . gen mpg_centered=mpg-r(mean)
+## 
+## . sum mpg_centered
+## 
+##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+## -------------+---------------------------------------------------------
+## mpg_centered |         74   -4.03e-08    5.785503  -9.297297    19.7027
+## 
+## . reg price i.foreign##c.mpg_centered
+## 
+##       Source |       SS           df       MS      Number of obs   =        74
+## -------------+----------------------------------   F(3, 70)        =      9.48
+##        Model |   183435285         3  61145094.9   Prob &gt; F        =    0.0000
+##     Residual |   451630112        70  6451858.74   R-squared       =    0.2888
+## -------------+----------------------------------   Adj R-squared   =    0.2584
+##        Total |   635065396        73  8699525.97   Root MSE        =    2540.1
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##      foreign |
+##     Foreign  |   1666.519    717.217     2.32   0.023     236.0751    3096.963
+## mpg_centered |  -329.2551   74.98545    -4.39   0.000    -478.8088   -179.7013
+##              |
+##      foreign#|
+##           c. |
+## mpg_centered |
+##     Foreign  |   78.88826   112.4812     0.70   0.485    -145.4485     303.225
+##              |
+##        _cons |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+## ------------------------------------------------------------------------------
+## 
+## . margins foreign, at(mpg_centered=(-3 (1) 3))
+## 
+## Adjusted predictions                            Number of obs     =         74
+## Model VCE    : OLS
+## 
+## Expression   : Linear prediction, predict()
+## 
+## 1._at        : mpg_centered    =          -3
+## 
+## 2._at        : mpg_centered    =          -2
+## 
+## 3._at        : mpg_centered    =          -1
+## 
+## 4._at        : mpg_centered    =           0
+## 
+## 5._at        : mpg_centered    =           1
+## 
+## 6._at        : mpg_centered    =           2
+## 
+## 7._at        : mpg_centered    =           3
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |     Margin   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##  _at#foreign |
+##  1#Domestic  |    6576.06    370.446    17.75   0.000     5837.229    7314.891
+##   1#Foreign  |   8005.915   766.8178    10.44   0.000     6476.545    9535.284
+##  2#Domestic  |   6246.805   354.4734    17.62   0.000      5539.83     6953.78
+##   2#Foreign  |   7755.548   709.9327    10.92   0.000     6339.632    9171.464
+##  3#Domestic  |    5917.55   354.0032    16.72   0.000     5211.513    6623.587
+##   3#Foreign  |   7505.181   658.8306    11.39   0.000     6191.185    8819.177
+##  4#Domestic  |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+##   4#Foreign  |   7254.814   614.9548    11.80   0.000     6028.325    8481.303
+##  5#Domestic  |    5259.04    397.981    13.21   0.000     4465.292    6052.788
+##   5#Foreign  |   7004.447   579.9479    12.08   0.000     5847.778    8161.117
+##  6#Domestic  |   4929.785   437.9413    11.26   0.000     4056.338    5803.231
+##   6#Foreign  |   6754.081   555.4891    12.16   0.000     5646.192    7861.969
+##  7#Domestic  |    4600.53    486.253     9.46   0.000     3630.729    5570.331
+##   7#Foreign  |   6503.714   543.0057    11.98   0.000     5420.723    7586.704
+## ------------------------------------------------------------------------------
+## 
+## . marginsplot
+## 
+##   Variables that uniquely identify margins: mpg_centered foreign
+## 
+## . graph export marginsplot.eps, replace
+## (note: file marginsplot.eps not found)
+## (file marginsplot.eps written in EPS format)</code></pre>
 <div class="figure">
-<img src="/post/temp.png" />
+<img src="/post/2017-02-16-interpret_interaction_files/marginsplot.png" />
 
 </div>
 <p>In this example, the graph shows the predicted price for foreign and domestic cars at different level of mpg.</p>
