@@ -4,7 +4,6 @@ title: Interaction term in a non-linear model
 comments: true
 tags:
   - statistics
-  - R
 date: 2017-02-14
 ---
 
@@ -74,6 +73,3 @@ $$ log(P(y=1)/(1-P(y=1))) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 $$
 That is, the log of odds is a linear function of $x_1$ and $x_2$ and interaction.  The interaction effect has the same interpretation as the linear model, in terms of log of odds.  
 
 Or, it becomes multiplicative effect when we talk about odds ratios.  Stata's "margins" command is a great tool to calculate marginal effects in various situations, as shown in [Maarten Buis 2010](http://www.stata-journal.com/sjpdf.html?articlenum=st0194).
-
-
-
