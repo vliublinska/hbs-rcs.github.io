@@ -4,17 +4,5 @@ Imports:
     ggplot2,
     svglite,
     tidyr
-Suggests:
-    MASS,
-    arm,
-    gam,
-    gbm,
-    glmnet,
-    ivlewbel,
-    msm,
-    pscl,
-    randomForest,
-    snowfall,
-    tmle
 Remotes:
     rstudio/blogdown
