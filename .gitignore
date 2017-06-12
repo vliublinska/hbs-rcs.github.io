@@ -7,3 +7,19 @@
 
 .Rhistory
 .DS_Store
+
+# Here is a list of posts we want Travis to compile:
+2016-11-15-conda.html
+2016-11-17-bsub-cron.html
+2016-11-17-jupyter-port-forwarding.html
+2016-11-17-matlab.html
+2017-02-15-health-insurance-model.html
+2017-02-15-health-insurance-model_files
+2017-02-16-nonlinear_interaction.html
+2017-02-28-git.html
+anscombe.html
+features.html
+parallel.html
+permutation.html
+permutation_files
+power-analysis.html
