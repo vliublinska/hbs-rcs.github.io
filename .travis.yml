@@ -2,10 +2,15 @@ language: r
 sudo: false
 cache: packages
 
+branches:
+  except:
+    - master
+
 script:
   - R -e "blogdown::install_hugo()"
   - make build
-  - ls public
+  - cp .travis.yml public
+  - ls -a public
 
 # Deploy the documentation to GitHub Pages
 env:
