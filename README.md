@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hbs-rcs/hbs-rcs.github.io.svg?branch=master)](https://travis-ci.org/hbs-rcs/hbs-rcs.github.io)
+[![Build Status](https://travis-ci.org/hbs-rcs/hbs-rcs.github.io.svg?branch=source)](https://travis-ci.org/hbs-rcs/hbs-rcs.github.io)
 
 # RCS Documentation
 
