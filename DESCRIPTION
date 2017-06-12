@@ -1,0 +1,8 @@
+Imports:
+    blogdown,
+    dplyr,
+    ggplot2,
+    svglite,
+    tidyr
+Remotes:
+    rstudio/blogdown

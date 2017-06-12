@@ -1,0 +1,21 @@
+language: r
+sudo: false
+cache: packages
+
+script:
+  - R -e "blogdown::install_hugo()"
+  - make build
+  - ls public
+
+# Deploy the documentation to GitHub Pages
+env:
+  - secure: "RGiL9XIJKRWA73wSon1xY4qrzC9AT5Ind50Yotdc4MV9QS9OYst9MsVbQyDhu1R2grW7ZqIJ+S4+alg/XqhiErOC9u5gXfRc9zfkII6iINnWjSr3BA3TBUafZtV0dNSAIgX4tcKSoT9gfcpxPVMsL7lpqu+9EEkesrGmaxkU4sE="
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: source
+  local_dir: public
+  target_branch: master
