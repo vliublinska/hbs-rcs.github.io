@@ -7,6 +7,7 @@ branches:
     - master
 
 script:
+  - R -e "blogdown:::bin_paths()"
   - R -e "blogdown::install_hugo()"
   - make build
   - cp .travis.yml public
