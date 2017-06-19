@@ -6,9 +6,13 @@ branches:
   except:
     - master
 
+before_install:
+  - mkdir -p ~/bin
+  - wget --no-check-certificate https://github.com/gohugoio/hugo/releases/download/v0.23/hugo_0.23_Linux-64bit.tar.gz
+  - tar xf hugo_0.23_Linux-64bit.tar.gz
+  - mv hugo ~/bin
+
 script:
-  - R -e "blogdown:::bin_paths()"
-  - R -e "blogdown::install_hugo()"
   - make build
   - cp .travis.yml public
   - ls -a public
