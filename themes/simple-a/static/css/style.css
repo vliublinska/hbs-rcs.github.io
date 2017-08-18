@@ -147,6 +147,10 @@ p {
   list-style: square;
 }
 
+.post .content ol > li {
+  list-style: decimal;
+}
+
 .post .content ol {
   margin-bottom: 25px;
 }
