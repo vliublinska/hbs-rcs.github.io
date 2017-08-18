@@ -1,0 +1,31 @@
+---
+title: Web Scraping in R
+date: 2017-08-18
+author: Andrew Marder
+tags:
+  - R
+---
+
+Let's walk through some steps for web scraping with R. At the bottom of [this page](https://www.google.com/patents/US608845) there is a table of references that I want to scrape. Let's use the [rvest](https://github.com/hadley/rvest) package to get the HTML associated with that page:
+
+```{r, message = FALSE}
+library(rvest)
+
+html <- read_html("https://www.google.com/patents/US608845")
+html
+```
+
+Now let's use the `html_nodes()` function to extract the table of interest. I used Chrome's Developer Tools to get the XPath of the table.
+
+```{r}
+referenced_by <- html_node(html, xpath='//*[@id="intl_patents_v"]/div[8]/table')
+referenced_by
+```
+
+Now let's convert that HTML table into a data frame.
+
+```{r, message = FALSE}
+html_table(referenced_by)
+```
+
+We've only scratched the surface here, but I hope this example shows off the convenience of the rvest package.

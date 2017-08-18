@@ -1,8 +1,7 @@
 Imports:
     blogdown,
-    dplyr,
-    ggplot2,
+    rvest,
     svglite,
-    tidyr
+    tidyverse
 Remotes:
     rstudio/blogdown
