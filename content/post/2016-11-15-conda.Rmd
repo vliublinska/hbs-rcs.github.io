@@ -33,14 +33,15 @@ The first step to installing Python or R on the Grid is to install Miniconda. Th
 3.  Download the Miniconda installer:
 
     ```bash
-    my_run wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+    my_run wget http://grid.rcs.hbs.org/files/miniconda2-linux-x86_64-4.1.12.sh.gz
     ```
 
-4.  Run the installer
+4.  Unzip and run the installer
 
     ```bash
-    chmod +x Miniconda2-latest-Linux-x86_64.sh
-    my_run ./Miniconda2-latest-Linux-x86_64.sh
+    gunzip miniconda2-linux-x86_64-4.1.12.sh.gz
+    chmod +x miniconda2-linux-x86_64-4.1.12.sh
+    my_run ./miniconda2-linux-x86_64-4.1.12.sh
     ```
 
     Here's how I answered the questions when running the installer:
@@ -66,7 +67,7 @@ The first step to installing Python or R on the Grid is to install Miniconda. Th
 6.  Remove the Miniconda installer:
 
     ```bash
-    rm -f Miniconda2-latest-Linux-x86_64.sh
+    rm -f miniconda2-linux-x86_64-4.1.12.sh
     ```
 
 ## Python
