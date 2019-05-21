@@ -1,5 +1,6 @@
+dist: xenial
 language: cpp
-sudo: true
+sudo: required
 
 branches:
   except:
