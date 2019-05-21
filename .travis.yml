@@ -1,21 +1,16 @@
-language: r
-sudo: false
-cache: packages
+language: cpp
+sudo: true
 
 branches:
   except:
     - master
 
 before_install:
-  - mkdir -p ~/bin
-  - wget --no-check-certificate https://github.com/gohugoio/hugo/releases/download/v0.23/hugo_0.23_Linux-64bit.tar.gz
-  - tar xf hugo_0.23_Linux-64bit.tar.gz
-  - mv hugo ~/bin
+  - wget -O /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v0.55.5/hugo_0.55.5_Linux-64bit.deb
+  - sudo dpkg -i /tmp/hugo.deb
 
 script:
-  - make build
-  - cp .travis.yml public
-  - ls -a public
+  - hugo
 
 # Deploy the documentation to GitHub Pages
 env:

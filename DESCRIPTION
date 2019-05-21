@@ -1,7 +1,0 @@
-Imports:
-    blogdown,
-    rvest,
-    svglite,
-    tidyverse
-Remotes:
-    rstudio/blogdown

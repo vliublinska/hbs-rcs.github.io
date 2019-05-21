@@ -25,7 +25,7 @@ referenced_by
 Now let's convert that HTML table into a data frame.
 
 ```{r, message = FALSE}
-html_table(referenced_by)
+# html_table(referenced_by)
 ```
 
 We've only scratched the surface here, but I hope this example shows off the convenience of the rvest package.
