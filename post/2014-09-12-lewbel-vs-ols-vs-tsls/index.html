@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.3.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Andrew Marder">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="This post is inspired by diffuse prior
+Lewbel’s 2012 paper proposed an estimator based on heteroscedasticity to address the problem of endogeneity without an instrument. This problem has been an issue for many (maybe most) empirical researchers with observational data. People are challenged with endogeneity and they have difficulty locating a valid instrument (who doesn’t?).
+Using the “ivlewbel” package in R, I compare the performance of Lewbel’s estimator with OLS and TSLS (two stage least square) estimators, with different values of sample size, and heteroscedasticity.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2014-09-12-lewbel-vs-ols-vs-tsls/">
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,400italic,700|Roboto+Mono">
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.min.9e398b7a64ee2c82769da9724cdbf0cc.css">
+
+  
+
+  
+  
+  
+
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2014-09-12-lewbel-vs-ols-vs-tsls/">
+
+  
+  
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="HBS RCS">
+  <meta property="og:url" content="/post/2014-09-12-lewbel-vs-ols-vs-tsls/">
+  <meta property="og:title" content="A comparison of Lewbel model vs. OLS and TSLS | HBS RCS">
+  <meta property="og:description" content="This post is inspired by diffuse prior
+Lewbel’s 2012 paper proposed an estimator based on heteroscedasticity to address the problem of endogeneity without an instrument. This problem has been an issue for many (maybe most) empirical researchers with observational data. People are challenged with endogeneity and they have difficulty locating a valid instrument (who doesn’t?).
+Using the “ivlewbel” package in R, I compare the performance of Lewbel’s estimator with OLS and TSLS (two stage least square) estimators, with different values of sample size, and heteroscedasticity."><meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2014-09-12T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2014-09-12T00:00:00&#43;00:00">
+  
+
+  
+
+  
+
+  <title>A comparison of Lewbel model vs. OLS and TSLS | HBS RCS</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" role="textbox" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">HBS RCS</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav mr-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+      
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1 itemprop="name">A comparison of Lewbel model vs. OLS and TSLS</h1>
+
+  
+
+  
+    
+
+
+
+<meta content="2014-09-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+<meta content="2014-09-12 00:00:00 &#43;0000 UTC" itemprop="dateModified">
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    <time>Sep 12, 2014</time>
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    4 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+
+  
+    
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=&amp;url="
+         target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u="
+         target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=&amp;title="
+         target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=&amp;title="
+         target="_blank" rel="noopener">
+        <i class="fab fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=&amp;body=">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+
+<p>This post is inspired by <a href="http://diffuseprior.wordpress.com/2014/05/15/the-ivlewbel-package-a-new-way-to-tackle-endogenous-regressor-models/">diffuse prior</a></p>
+<p><a href="https://www2.bc.edu/~lewbel/simhet16.pdf">Lewbel’s 2012 paper</a> proposed an estimator based on heteroscedasticity to address the problem of endogeneity without an instrument. This problem has been an issue for many (maybe most) empirical researchers with observational data. People are challenged with endogeneity and they have difficulty locating a valid instrument (who doesn’t?).</p>
+<p>Using the “ivlewbel” package in R, I compare the performance of Lewbel’s estimator with OLS and TSLS (two stage least square) estimators, with different values of sample size, and heteroscedasticity.</p>
+<pre class="r"><code>library(ivlewbel)
+require(snowfall)
+set.seed(666)
+
+## initialize parallel cores.
+sfInit( parallel=TRUE, cpus=12)
+
+gen.sim &lt;- function(df){
+    k &lt;- df[&#39;k&#39;]
+    nobs &lt;- df[&#39;nobs&#39;]
+    x&lt;-runif(nobs, min=-1, max=1)
+    u &lt;- rnorm(nobs,0,1)
+    u1 &lt;- rnorm(nobs,0,1)
+    u2 &lt;- rnorm(nobs,0,1)
+    x1 &lt;-runif(nobs, min=-1, max=1)
+    x2 &lt;- rnorm(nobs,0,1)
+    z &lt;- rnorm(nobs,0,1)
+    e1 = exp(.3*k*(x+x1))*u1
+    e2 = u2
+
+    ## y1 is the endogenous variable; z is the instrument; x1 is
+    ## omitted but determines heteroskedasticity of y1; e1 e2 are
+    ## correlated because of common factor of u; x is the only
+    ## observed exogenous variable.  The true coefficient on y1 should
+    ## be 1.  lewbel model use x as both the exogenous variable and
+    ## the heteroscedasticity factor.  tsls assumes we have an
+    ## instrument z.  k is to adjust for degree of heteroscedasticity.
+    y1 = 1 + z + x + x1 +  e1
+    y2 = 1 + y1  + x + x1 +  e2
+    data = data.frame(y2, y1, x1, x2, z, x)
+
+    lewbel.model &lt;- lewbel(formula = y2 ~ y1  | x   | x  , data = data)
+    lm.model &lt;- lm(y2 ~ y1 + x, data=data)
+    tsls.model &lt;- tsls(y2 ~ y1 + x   , ~ z + x  , data=data)
+
+    lm.y1 &lt;- summary(lm.model)$coefficients[&#39;y1&#39;,&#39;Estimate&#39;]-1
+    tsls.y1 &lt;- tsls.model$coefficients[&#39;y1&#39;]-1
+    lewbel.y1 &lt;- lewbel.model$coef.est[&#39;y1&#39;, &#39;Estimate&#39;]-1
+    return(c(lm=lm.y1, lewbel=lewbel.y1,tsls=tsls.y1))
+}
+
+
+## set parameter space
+sim.grid = seq(1,100,1)
+k.grid=seq(1,10,1)
+nobs.grid = ceiling(exp(seq(4, 8, 1))/100)*100
+data.grid &lt;- expand.grid(nobs.grid, sim.grid, k.grid)
+names(data.grid) &lt;- c(&#39;nobs&#39;, &#39;nsim&#39;, &#39;k&#39;)
+
+## export functions to the slaves
+## export data to the slaves if necessary
+sfExport(list=list(&quot;gen.sim&quot;))
+
+## export function to the slaves
+sfLibrary(ivlewbel)
+
+## parallel computing
+results &lt;- data.frame(t(sfApply(data.grid, 1, gen.sim)))
+
+## stop the cluster
+sfStop()
+
+names(results) &lt;- c(&#39;lm&#39;,&#39;lewbel&#39;,&#39;tsls&#39;)
+forshiny &lt;- cbind(data.grid, results)
+## write out for use in shiny.
+## write.csv(forshiny, &#39;results.csv&#39;)</code></pre>
+<p>The data generating processes in this simulation study are: <span class="math display">\[y_2\]</span> is the dependent variable.</p>
+<p><span class="math display">\[
+y_2 = y_1 + x + x_1 + e_2
+\]</span></p>
+<p><span class="math display">\[
+y_1 = z + x + x_1 + e_1
+\]</span></p>
+<p>Here <span class="math display">\[e_1\]</span> and <span class="math display">\[e_2\]</span> are the error terms. Among the independent variables of <span class="math display">\[y_2\]</span>, <span class="math display">\[x\]</span> is observed; <span class="math display">\[x_1\]</span> is unobserved, <span class="math display">\[z\]</span> is the intended instruments. <span class="math display">\[y_1\]</span> is the endogenous variable, since it’s determined by <span class="math display">\[x_1\]</span>, and <span class="math display">\[x_1\]</span> is part of <span class="math display">\[y_2\]</span>’s error term since <span class="math display">\[x_1\]</span> is unobserved. If we have <span class="math display">\[z\]</span>, then we can use TSLS to estimate the model. If not, then we’ll try Lewbel’s model to see if it works.</p>
+<p>The ‘gen_sim’ function returns the three estimates (OLS, TSLS and Lewbel). <span class="math display">\[e_1\]</span> is assumed to have some degree of heteroscedasticity:</p>
+<p><span class="math display">\[
+e_1 = e^{0.3*k*(x+x_1)}*u_1
+\]</span></p>
+<p>where <span class="math display">\[u_1\]</span> is a standard normal variable. <span class="math display">\[k\]</span> is a variable used to adjust for degree of heteroscedasticity. Here we assume we know a variable that determines the heteroscedasticity: <span class="math display">\[x\]</span>. But <span class="math display">\[x_1\]</span> remains unobserved.</p>
+<p>We then simulate 100 times with <span class="math display">\[k\]</span> ranging from 1 to 10; number of observations from <span class="math display">\[e^4\]</span> to <span class="math display">\[e^8\]</span>.</p>
+<p>Since there are many simulations, we used “snowfall” library to speed things up.</p>
+<p>For raw code, please visit <a href="https://github.com/xiangao/lewbel2">here</a>.</p>
+<center>
+<iframe src="https://xiangao.shinyapps.io/lewbel2/" style="border: none; width: 700px; height: 700px;">
+</iframe>
+</center>
+<p>We can see at moderate degree of heteroscedasticity, Lewbel’s estimator performs well, at reasonably large sample size. TSLS performs well since we assume we observe <span class="math display">\[z\]</span>. At very high degree of heteroscedasticity, both OLS and Lewbel’s estimator perform well. My explanation is that when there is very high degree of heteroscedasticity, heteroscedasticity just outplays endogeneity so that OLS’ bias goes down (since we know that OLS under heteroscedasticity is consistent.), with large sample size.</p>
+
+    </div>
+
+    
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/statistics/">statistics</a>
+  
+</div>
+
+
+
+    
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  <div class="media author-card" itemscope itemtype="http://schema.org/Person">
+    
+      
+      <img class="portrait mr-3" src="/authors/admin/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_250x250_fill_q90_lanczos_center.jpg" itemprop="image" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title" itemprop="name"><a href="/authors/admin/">Andrew Marder</a></h5>
+      <h6 class="card-subtitle">Senior Statistician / Data Scientist</h6>
+      <p class="card-text" itemprop="description">I enjoy statistics and programming.</p>
+      <ul class="network-icon" aria-hidden="true">
+        
+      </ul>
+    </div>
+  </div>
+
+
+
+      
+      
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<div class="container">
+  <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+</div>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+    
+    <script src="/js/mathjax-config.js"></script>
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js" integrity="sha256-aYTdUrn6Ow1DDgh5JTc3aDGnnju48y/1c8s1dgkYPQ8=" crossorigin="anonymous"></script>
+        
+      
+
+      
+      
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_CHTML-full" integrity="sha256-GhM+5JHb6QUzOQPXSJLEWP7R73CbkisjzK5Eyij4U9w=" crossorigin="anonymous" async></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script>
+      const search_index_filename = "/index.json";
+      const i18n = {
+        'placeholder': "Search...",
+        'results': "results found",
+        'no_results': "No results found"
+      };
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.3258b3a711acd6208568ec000de4beec.js"></script>
+
+  </body>
+</html>
+

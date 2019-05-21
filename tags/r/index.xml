@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on HBS RCS</title>
+    <link>/tags/r/</link>
+    <description>Recent content in R on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 01 Mar 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Use machine learning for causal effect in observational study</title>
+      <link>/post/2017-03-01-causal_tmle/</link>
+      <pubDate>Wed, 01 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-03-01-causal_tmle/</guid>
+      <description>A simulation for OLS model In an observational study, we need to assume we have the functional form to get causal effect estimated correctly, in addtion to the assumption of treatment being exogenous.
+library(MASS) library(ggplot2) library(dplyr) library(tmle) library(glmnet) set.seed(366) nobs &amp;lt;- 2000 xw &amp;lt;- .8 xz &amp;lt;- .5 zw &amp;lt;- .6 nrow &amp;lt;- 3 ncol &amp;lt;- 3 covarMat = matrix( c(1^2, xz^2, xw^2, xz^2, 1^2, zw^2, xw^2, zw^2, 1^2 ) , nrow=ncol , ncol=ncol ) mu &amp;lt;- rep(0,3) rawvars &amp;lt;- mvrnorm(n=nobs, mu=mu, Sigma=covarMat) df &amp;lt;- tbl_df(rawvars) names(df) &amp;lt;- c(&amp;#39;x&amp;#39;,&amp;#39;z&amp;#39;,&amp;#39;w&amp;#39;) df &amp;lt;- df %&amp;gt;% mutate(log.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>programming on HBS RCS</title>
+    <link>/tags/programming/</link>
+    <description>Recent content in programming on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 19 Jun 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/programming/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Makefile Tips</title>
+      <link>/post/make/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/make/</guid>
+      <description>If you&amp;rsquo;re new to Make, check out Mike Bostock&amp;rsquo;s article Why Use Make, it&amp;rsquo;s excellent! This post is intended as a follow-up to Mike&amp;rsquo;s introduction.
+I love Makefiles because they allow me to describe my workflow as a directed acyclic graph. Makefiles are a great example of declarative programming. When I specify a rule like the following:
+targetfile: sourcefile command  I am saying that the targetfile depends on the sourcefile.</description>
+    </item>
+    
+  </channel>
+</rss>

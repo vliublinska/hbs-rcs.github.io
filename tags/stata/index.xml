@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stata on HBS RCS</title>
+    <link>/tags/stata/</link>
+    <description>Recent content in Stata on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 14 Feb 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/stata/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Interpreting interaction term in a regression model</title>
+      <link>/post/2017-02-16-interpret_interaction/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-02-16-interpret_interaction/</guid>
+      <description>Interaction with two binary variables In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.
+Let’s start with the simpliest situation: \(x_1\) and \(x_2\) are binary and coded 0/1.
+\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1x_2 \]
+In this case, we have a saturated model; that is, we have three coefficients representing additive effects from the baseline situation (both \(x_1\) and \(x_2\) being 0).</description>
+    </item>
+    
+    <item>
+      <title>Marginal effects in models with fixed effects</title>
+      <link>/post/2017-02-16-margins_nonlinear/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-02-16-margins_nonlinear/</guid>
+      <description>Marginal effects in a linear model Stata’s margins command has been a powerful tool for many economists. It can calculate predicted means as well as predicted marginal effects. However, we do need to be careful when we use it when fixed effects are included. In a linear model, everything works out fine. However, in a non-linear model, you may not want to use margins, since it’s not calculating what you have in mind.</description>
+    </item>
+    
+  </channel>
+</rss>

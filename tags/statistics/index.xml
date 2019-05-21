@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>statistics on HBS RCS</title>
+    <link>/tags/statistics/</link>
+    <description>Recent content in statistics on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 01 Mar 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/statistics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Use machine learning for causal effect in observational study</title>
+      <link>/post/2017-03-01-causal_tmle/</link>
+      <pubDate>Wed, 01 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-03-01-causal_tmle/</guid>
+      <description>A simulation for OLS model In an observational study, we need to assume we have the functional form to get causal effect estimated correctly, in addtion to the assumption of treatment being exogenous.
+library(MASS) library(ggplot2) library(dplyr) library(tmle) library(glmnet) set.seed(366) nobs &amp;lt;- 2000 xw &amp;lt;- .8 xz &amp;lt;- .5 zw &amp;lt;- .6 nrow &amp;lt;- 3 ncol &amp;lt;- 3 covarMat = matrix( c(1^2, xz^2, xw^2, xz^2, 1^2, zw^2, xw^2, zw^2, 1^2 ) , nrow=ncol , ncol=ncol ) mu &amp;lt;- rep(0,3) rawvars &amp;lt;- mvrnorm(n=nobs, mu=mu, Sigma=covarMat) df &amp;lt;- tbl_df(rawvars) names(df) &amp;lt;- c(&amp;#39;x&amp;#39;,&amp;#39;z&amp;#39;,&amp;#39;w&amp;#39;) df &amp;lt;- df %&amp;gt;% mutate(log.</description>
+    </item>
+    
+    <item>
+      <title>Interpreting interaction term in a regression model</title>
+      <link>/post/2017-02-16-interpret_interaction/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-02-16-interpret_interaction/</guid>
+      <description>Interaction with two binary variables In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.
+Let’s start with the simpliest situation: \(x_1\) and \(x_2\) are binary and coded 0/1.
+\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1x_2 \]
+In this case, we have a saturated model; that is, we have three coefficients representing additive effects from the baseline situation (both \(x_1\) and \(x_2\) being 0).</description>
+    </item>
+    
+    <item>
+      <title>Marginal effects in models with fixed effects</title>
+      <link>/post/2017-02-16-margins_nonlinear/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017-02-16-margins_nonlinear/</guid>
+      <description>Marginal effects in a linear model Stata’s margins command has been a powerful tool for many economists. It can calculate predicted means as well as predicted marginal effects. However, we do need to be careful when we use it when fixed effects are included. In a linear model, everything works out fine. However, in a non-linear model, you may not want to use margins, since it’s not calculating what you have in mind.</description>
+    </item>
+    
+    <item>
+      <title>A comparison of various count data models with extra zeros</title>
+      <link>/post/2014-09-17-poisson-models/</link>
+      <pubDate>Wed, 17 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2014-09-17-poisson-models/</guid>
+      <description>In empirical studies, data sets with a lot of zeros are often hard to model. There are various models to deal with it: zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc.
+Here we are following a zero-inflated model’s thinking: model the data with two processes. One is a Bernoulli process, the other one is a count data process (Poisson or NB).
+We’d like to see, in this simulation exercise, how different models perform with changes of sample size and percentage of zeros (we expect the less zero, the better a plain Poisson model would perform).</description>
+    </item>
+    
+    <item>
+      <title>A comparison of Lewbel model vs. OLS and TSLS</title>
+      <link>/post/2014-09-12-lewbel-vs-ols-vs-tsls/</link>
+      <pubDate>Fri, 12 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2014-09-12-lewbel-vs-ols-vs-tsls/</guid>
+      <description>This post is inspired by diffuse prior
+Lewbel’s 2012 paper proposed an estimator based on heteroscedasticity to address the problem of endogeneity without an instrument. This problem has been an issue for many (maybe most) empirical researchers with observational data. People are challenged with endogeneity and they have difficulty locating a valid instrument (who doesn’t?).
+Using the “ivlewbel” package in R, I compare the performance of Lewbel’s estimator with OLS and TSLS (two stage least square) estimators, with different values of sample size, and heteroscedasticity.</description>
+    </item>
+    
+  </channel>
+</rss>
