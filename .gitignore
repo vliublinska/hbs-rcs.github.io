@@ -1,5 +1,6 @@
 /blogdown/
 /public/
+/resources/
 
 # output files from rendering fast posts
 /content/fast/*.html
