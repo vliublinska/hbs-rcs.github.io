@@ -1,0 +1,46 @@
+---
+title: Web Scraping in R
+date: 2019-08-08
+author: Andrew Marder, Victoria L, Prince
+tags: ["R"]
+---
+
+Let's walk through some steps for web scraping with R. On [this Wikipedia page](https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens) there is a table of visa requirements that I want to scrape. Let's use the [rvest](https://github.com/hadley/rvest) package to get the HTML associated with that page:
+
+```{r, message = FALSE}
+library(rvest)
+
+html <- read_html("https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens")
+html
+```
+
+Now let's use the `html_nodes()` function to extract the table of interest. I used Chrome's Developer Tools to get the XPath of the table (see notes at the end of the post on how to do it):
+
+```{r}
+referenced_by <- html_node(html, xpath='//*[@id="mw-content-text"]/div/table[1]')
+referenced_by
+```
+
+Now let's convert that HTML table into a data frame.
+
+```{r, message = FALSE}
+visa_requirements <- html_table(referenced_by)
+head(visa_requirements[,1:3])
+```
+
+Finally, we can clean footnote references from columns 2 and 3 using the following ....
+
+```{r, message = FALSE}
+visa_requirements <- html_table(referenced_by)
+visa_requirements$`Visa requirement` <- gsub("\\[.*","",visa_requirements$`Visa requirement`)
+visa_requirements$`Allowed stay` <-  gsub("\\[.*","",visa_requirements$`Allowed stay`)
+head(visa_requirements[,1:3])
+```
+
+We've only scratched the surface here, but hope this example shows off the convenience of the `rvest` package.
+
+Notes:
+
+- Chrome's Developer Tools can be launched by right-clicking on the page and selecting Inspect. Then, mouse over the html code listed under elements and find a place that highlights the table of interest on the right. Then right-click again, select Copy -> Copy XPath.
+
+- If writing custom scraping scripts in R is not the route you'd want to take, our team has recently discovered (and had very positive results) with a commercial tool [Mozenda](https://www.mozenda.com/). As of 8/8/2019, they offer a 30-day trial of a full product. 
